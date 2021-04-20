@@ -1,0 +1,10 @@
+server {
+    listen 80;
+    server_name *.local.www-security.net *.locker.lan;
+    
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/run/locker-server/locker.sock;
+    }
+}
+

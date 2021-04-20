@@ -1,0 +1,59 @@
+import json
+import yaml
+import os
+
+# Default config
+config = {
+
+    #
+    # Main config
+    #
+    'APPS_PATH': os.getenv('LOCKER_APPS_PATH', '/opt/locker-apps/'),
+    'LOCAL_CONFIG': os.getenv('LOCKER_LOCAL_CONFIG', 'config.yml'),
+    # 
+    # SSL
+    #
+    # 'PRIVKEY': None,
+    # s'CERT': None,
+
+
+    #
+    # Flask settings
+    #
+    'JSONIFY_PRETTYPRINT_REGULAR': True,
+
+
+    #
+    # Session and cookie
+    #
+    'SESSION_COOKIE_SAMESITE': None,
+    'SESSION_COOKIE_SECURE': True,
+    'SESSION_TYPE': 'redis',
+    'PERMANENT_SESSION_LIFETIME': 86400,
+
+    #
+    # Applications
+    #
+
+    'APPS_CONFIG': {
+        '*': {
+            'home_size': 50,
+            'users': 2
+        }
+    }
+}
+
+
+# update config
+print("read configs")
+for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
+    print("read local config from", path)
+    with open(path, "r") as fh:
+        cfg = yaml.full_load(fh)
+        config.update(cfg)
+
+# fix config
+if config['APPS_PATH']:
+    config['APPS_PATH'] = os.path.expanduser(config['APPS_PATH'])
+
+

@@ -1,0 +1,50 @@
+from setuptools import setup
+import os
+
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+
+setup(name='locker-server',
+        version='0.0.1',
+        description='locker OpenID Connect file server',
+        url='https://github.com/yaroslaff/locker-server',
+        author='Yaroslav Polyakov',
+        author_email='yaroslaff@gmail.com',
+        license='GPL',
+        packages=[
+            'locker_server', 
+            'locker_server.bp', 
+            'locker_server.datafile'
+        ],
+
+        data_files = [
+            ('locker/nginx',
+                ['contrib/nginx/locker']),
+            ('locker/systemd', 
+                ['contrib/systemd/locker-server.service']), 
+            ('locker/uwsgi',
+                ['contrib/uwsgi/locker.ini'])
+        ], 
+        include_package_data = True,
+
+
+        scripts=['bin/locker-server.py'],
+
+        long_description = read('README.md'),
+        long_description_content_type='text/markdown',
+
+        install_requires=[
+            'flask', 
+            'flask-login', 
+            'flask-session', 
+            'python-dotenv',
+            'requests',
+            'pyyaml',
+            'redis',
+            'oauthlib'],
+
+        zip_safe=True
+      )
+
