@@ -21,7 +21,7 @@ setup(name='locker-server',
 
         data_files = [
             ('locker/nginx',
-                ['contrib/nginx/locker']),
+                ['contrib/nginx/locker', 'contrib/nginx/locker-https']),
             ('locker/systemd', 
                 ['contrib/systemd/locker-server.service']), 
             ('locker/uwsgi',
