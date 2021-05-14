@@ -1,6 +1,9 @@
 server {
     listen 80;
     server_name *.local.www-security.net *.locker.lan;
+
+    access_log  /var/log/nginx/locker-server-access.log;
+    error_log   /var/log/nginx/locker-server-error.log;
     
     location / {
         include uwsgi_params;

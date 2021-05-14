@@ -83,8 +83,9 @@ class App:
 
         url = url or request.host
 
-        self.appname = url.split('.')[0]
-        self.username = url.split('.')[1]
+        leftpart = url.split('.')[0]
+
+        self.appname, self.username = leftpart.rsplit('-', 1)
 
         assert('/' not in self.appname)
         assert('/' not in self.username)
