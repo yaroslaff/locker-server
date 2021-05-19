@@ -96,8 +96,6 @@ def diag():
 
         # app exists or exception handled
         print("app:", app)
-        if not secure:
-            results['info']['google'] = app.get_credentials('google')
 
         try:
             options = app.get_config('etc/options.json')        
@@ -107,11 +105,16 @@ def diag():
             results['checks'].append("OK: etc/options.json exists")
 
         try:
-            options = app.get_config('etc/oidc_credentials.json')        
+            credentials = app.get_config('etc/oidc_credentials.json')        
         except LockerException as e:
             results['checks'].append(f"ERR: {e}")
         else:
             results['checks'].append("OK: etc/oidc_credentials.json exists")
+
+        if 'vendor' in credentials:
+            for provider in credentials['vendor']:
+                results['checks'].append(f'Vendor credentials for {provider}')
+
 
     except (LockerException, Exception) as e:
         if not secure:

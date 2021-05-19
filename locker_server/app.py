@@ -89,6 +89,8 @@ class App:
 
         assert('/' not in self.appname)
         assert('/' not in self.username)
+        assert('.' not in self.appname)
+        assert('.' not in self.username)
 
         self.name = '.'.join([self.username, self.appname])
         self.root = os.path.join(self.apps_path, self.username, self.appname)
