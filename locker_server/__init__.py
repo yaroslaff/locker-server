@@ -85,7 +85,6 @@ def diag():
     results = {
         'checks': list(),
         'info': dict(),
-        'config': config,
         'errors': list()
     }
 
@@ -115,7 +114,7 @@ def diag():
             for provider in credentials['vendor']:
                 try:
                     c = config['VENDOR_CREDENTIALS'][provider] 
-                    results['checks'].append(f'Vendor credentials for {provider}: {c}')
+                    results['checks'].append(f'Vendor credentials for {provider} exists')
                 except KeyError:
                     results['errors'].append(f'No vendor credentials for {provider}')                    
 
