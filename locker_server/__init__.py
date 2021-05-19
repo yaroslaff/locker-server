@@ -113,7 +113,11 @@ def diag():
 
         if 'vendor' in credentials:
             for provider in credentials['vendor']:
-                results['checks'].append(f'Vendor credentials for {provider}')
+                try:
+                    c = config['VENDOR_CREDENTIALS'][provider] 
+                    results['checks'].append(f'Vendor credentials for {provider}: {c}')
+                except KeyError:
+                    results['errors'].append(f'No vendor credentials for {provider}')                    
 
 
     except (LockerException, Exception) as e:
