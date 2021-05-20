@@ -48,10 +48,12 @@ def login(provider):
     else:
         redirect_uri=urljoin(request.url_root, "/oidc/callback"),
 
+    state='zzzzzzzzzzzz'
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=redirect_uri,
         scope=["openid", "email", "profile"],
+        state=state
     )
     session['oidc_provider'] = provider
     session['oidc_return'] = request.args.get('return')
