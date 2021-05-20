@@ -50,7 +50,7 @@ def login(provider):
 
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=urljoin(request.url_root, "/oidc/callback"),
+        redirect_uri=redirect_uri,
         scope=["openid", "email", "profile"],
     )
     session['oidc_provider'] = provider
