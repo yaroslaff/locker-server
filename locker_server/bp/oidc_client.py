@@ -49,6 +49,11 @@ def login(provider):
     )
     session['oidc_provider'] = provider
     session['oidc_return'] = request.args.get('return')
+    
+    print("LOGIN")
+    print("REDIRECT TO", request_uri)
+    print("url_root:", request.url_root)
+    
     return redirect(request_uri)
 
 @oidc_bp.route("/bind/<provider>")
@@ -63,6 +68,10 @@ def callback():
     code = request.args.get("code")
 
     provider = session['oidc_provider']
+
+    print("CALLBACK")
+    print("code:", code)
+    print("PROVIDER:", session['oidc_provider'])
 
     app = App()
     if 'Origin' in request.headers:
