@@ -43,8 +43,8 @@ def login(provider):
     # Use library to construct the request for Google login and provide
     # scopes that let you retrieve user's profile from Google
 
-    if config['auth_url']:
-        redirect_uri = config['auth_url']
+    if 'AUTH_URL' in config:
+        redirect_uri = config['AUTH_URL']
     else:
         redirect_uri=urljoin(request.url_root, "/oidc/callback"),
 
