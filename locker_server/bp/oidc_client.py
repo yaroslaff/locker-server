@@ -16,6 +16,7 @@ from flask_login import (
 from ..app import App
 from ..user import User, UserNotFound
 from ..datafile import UserFile
+from ..config import config
 
 oidc_bp = Blueprint('oidc', __name__)
 
@@ -41,6 +42,11 @@ def login(provider):
 
     # Use library to construct the request for Google login and provide
     # scopes that let you retrieve user's profile from Google
+
+    if config['auth_url']:
+        redirect_uri = config['auth_url']
+    else:
+        redirect_uri=urljoin(request.url_root, "/oidc/callback"),
 
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
