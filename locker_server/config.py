@@ -31,6 +31,12 @@ config = {
     'SESSION_TYPE': 'redis',
     'PERMANENT_SESSION_LIFETIME': 86400,
 
+
+    #
+    # Authentication
+    #
+    'AUTH_TIMEOUT': 30,
+
     #
     # Applications
     #
@@ -45,9 +51,7 @@ config = {
 
 
 # update config
-print("read configs")
 for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
-    print("read local config from", path)
     with open(path, "r") as fh:
         cfg = yaml.full_load(fh)
         config.update(cfg)

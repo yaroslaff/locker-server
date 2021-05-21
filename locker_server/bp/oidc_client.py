@@ -1,7 +1,13 @@
-from oauthlib.oauth2 import WebApplicationClient
+
 import requests
 import json
-from urllib.parse import urljoin
+import os
+import random
+import string
+from urllib.parse import urljoin, urlparse, urlunparse
+
+from oauthlib.oauth2 import WebApplicationClient
+import redis
 
 from flask import Blueprint, request, redirect, session, url_for
 from flask_login import (
@@ -20,6 +26,10 @@ from ..config import config
 
 oidc_bp = Blueprint('oidc', __name__)
 
+# r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(decode_responses=True)
+
+
 @oidc_bp.route('/hello')
 def hello():
     x = session.get('x', 0)
@@ -34,6 +44,7 @@ def login(provider):
     app = App()
     app.check_origin()    
 
+
     credentials = app.get_credentials(provider)
     client = WebApplicationClient(credentials['CLIENT_ID'])
     provider_cfg = get_provider_cfg(credentials['DISCOVERY_URL'])
@@ -43,12 +54,24 @@ def login(provider):
     # Use library to construct the request for Google login and provide
     # scopes that let you retrieve user's profile from Google
 
-    if 'AUTH_URL' in config:
-        redirect_uri = config['AUTH_URL']
+    if 'AUTH_HOST' in config:
+        redirect_uri = f'https://{config["AUTH_HOST"]}/oidc/callback'
     else:
-        redirect_uri=urljoin(request.url_root, "/oidc/callback"),
+        redirect_uri=urljoin(request.url_root, "/oidc/callback")
 
-    state='zzzzzzzzzzzz'
+    
+    alphabet = string.ascii_lowercase + string.digits
+    state = ''.join(random.choice(alphabet) for i in range(10))
+
+    key = f'locker-oidc-login:{state}'
+    data = {
+        'state': state,
+        'provider': provider,
+        'locker_app_url': request.url_root,
+    }
+    r.hset(key, mapping=data)
+    r.expire(key, int(config['AUTH_TIMEOUT']))
+
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=redirect_uri,
@@ -57,10 +80,6 @@ def login(provider):
     )
     session['oidc_provider'] = provider
     session['oidc_return'] = request.args.get('return')
-    
-    print("LOGIN")
-    print("REDIRECT TO", request_uri)
-    print("url_root:", request.url_root)
     
     return redirect(request_uri)
 
@@ -72,16 +91,30 @@ def bind(provider):
 @oidc_bp.route("/callback")
 def callback():
 
+    def get_redirect_url():
+        target_host = urlparse(data['locker_app_url']).netloc
+        parts = urlparse(request.url)
+        target = urlunparse(parts._replace(netloc=target_host))
+        return target
+
     # Get authorization code Google sent back to you
     code = request.args.get("code")
+    state = request.args.get("state")
 
-    provider = session['oidc_provider']
+    key = f'locker-oidc-login:{state}'
+    data = r.hgetall(key)
 
-    print("CALLBACK")
-    print("code:", code)
-    print("PROVIDER:", session['oidc_provider'])
+    provider = data['provider']
 
+    if 'AUTH_HOST' in config and request.host == config['AUTH_HOST']:
+        r.hset(key, 'request.url', request.url)
+        r.hset(key, 'request.base_url', request.base_url)
+
+        return redirect(get_redirect_url())
+
+    r.delete(key)
     app = App()
+
     if 'Origin' in request.headers:
         app.cross_response('Must have empty Origin headers in callback!', 400)
 
@@ -96,10 +129,11 @@ def callback():
     # Prepare and send a request to get tokens! Yay tokens!
     token_url, headers, body = client.prepare_token_request(
         token_endpoint,
-        authorization_response=request.url,
-        redirect_url=request.base_url,
+        authorization_response=data['request.url'],
+        redirect_url=data['request.base_url'],
         code=code
     )
+
     token_response = requests.post(
         token_url,
         headers=headers,

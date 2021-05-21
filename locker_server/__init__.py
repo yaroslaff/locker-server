@@ -79,7 +79,6 @@ def hello():
 @flask_app.route('/diag')
 # @login_required
 def diag():
-    print("diag get app")
     secure = False
 
     results = {
