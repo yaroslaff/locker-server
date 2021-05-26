@@ -167,7 +167,7 @@ class App:
             abort(403, 'Incorrect X-API-KEY')
 
     def allowed_origin(self, origin):
-        options = self.get_config('etc/options.json')        
+        options = self.get_config('etc/options.json')
         return 'origins' in options and origin in options['origins']
 
     def check_origin(self, origin = None):

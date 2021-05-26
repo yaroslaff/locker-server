@@ -5,11 +5,13 @@ import json
 import os
 import sys
 import argparse
+from urllib import parse
 from dotenv import load_dotenv
 import logging
 import secrets
 import time
 import traceback
+from urllib.parse import urlparse
 from logging.handlers import SMTPHandler
 
 from flask import Flask, make_response, redirect, request, url_for, abort, Response, session, jsonify
@@ -93,7 +95,7 @@ def diag():
         app = App(request.host)
 
         # app exists or exception handled
-        print("app:", app)
+        print("diag app:", app)
 
         try:
             options = app.get_config('etc/options.json')        
@@ -101,6 +103,14 @@ def diag():
             results['checks'].append(f"ERR: {e}")
         else:
             results['checks'].append("OK: etc/options.json exists")
+
+        if not 'origins' in options or not options['origins']:
+            results['errors'].append('Origins not configured')
+        
+        for o in options['origins']:
+            parsed = urlparse(o)
+            if parsed.scheme not in ['http','https'] or parsed.path or parsed.params or parsed.query or parsed.fragment:
+                results['errors'].append(f"Bad origin value '{o}'")
 
         try:
             credentials = app.get_config('etc/oidc_credentials.json')        
