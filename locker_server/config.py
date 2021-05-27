@@ -26,7 +26,7 @@ config = {
     #
     # Session and cookie
     #
-    'SESSION_COOKIE_SAMESITE': None,
+    'SESSION_COOKIE_SAMESITE': "None",
     'SESSION_COOKIE_SECURE': True,
     'SESSION_TYPE': 'redis',
     'PERMANENT_SESSION_LIFETIME': 86400,
