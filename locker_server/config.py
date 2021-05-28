@@ -35,7 +35,7 @@ config = {
     #
     # Authentication
     #
-    'AUTH_TIMEOUT': 30,
+    'AUTH_TIMEOUT': 600,
 
     #
     # Applications

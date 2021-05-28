@@ -104,6 +104,9 @@ def callback():
     key = f'locker-oidc-login:{state}'
     data = r.hgetall(key)
 
+    if not data:
+        return "Login session expired. Please return to application and login again."
+
     provider = data['provider']
 
     if 'AUTH_HOST' in config and request.host == config['AUTH_HOST']:
