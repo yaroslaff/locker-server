@@ -1,4 +1,6 @@
 import os
+import pathlib
+import shutil
 import json
 
 from flask import Blueprint, request, abort, send_file, Response, make_response
@@ -68,6 +70,8 @@ def put(path):
     # if request.method in ['PUT', 'DELETE']
     try:
         filepath = app.localpath(path)
+        dirpath = os.path.dirname(filepath)
+        
         with open(filepath, "wb") as fh:
             fh.write(request.get_data())
             return Response(f'Uploaded {path}\n')
@@ -91,10 +95,45 @@ def delete(path):
     try:
         filepath = app.localpath(path)
         if os.path.exists(filepath):
-            os.unlink(filepath)
-            return Response(f'Deleted {path}\n')
+            if os.path.isfile(filepath):
+                os.unlink(filepath)
+                return Response(f'Deleted file {path}\n')
+            elif os.path.isdir(filepath):
+                if 'rmdir' in request.headers:
+                    if 'recursive' in request.headers:
+                        shutil.rmtree(filepath)
+                        return f'Deleted (recursively) dir {path}'
+                    else:
+                        os.rmdir(filepath)
+                        return f'Deleted dir {path}'
+
         else:
             abort(404)
+
+    except OSError as e:
+        abort(409, str(e))
+
+    except (UserHomeRootViolation, UserHomePermissionViolation) as e:
+        print(f'{type(e)} exception: {e}')
+        abort(403)
+
+#### POST (MKDIR) ####
+@api_bp.route('/<path:path>', methods=['POST'])
+def post(path):
+    app = App()
+    app.check_key()
+
+    if '..' in path:
+        abort(404)
+
+    try:
+        if 'cmd' in request.form and request.form['cmd'] == "mkdir":
+            p = pathlib.Path(app.localpath(path))
+            if not p.exists():
+                p.mkdir()
+                return Response(f'Created {path}\n')
+            else:
+                return f'Already exists {path}'
 
     except (UserHomeRootViolation, UserHomePermissionViolation) as e:
         print(f'{type(e)} exception: {e}')
