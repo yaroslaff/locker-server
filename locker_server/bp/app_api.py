@@ -106,6 +106,8 @@ def delete(path):
                     else:
                         os.rmdir(filepath)
                         return f'Deleted dir {path}\n'
+                else:
+                    return abort(400, f'{path} is directory, but rmdir header is not set')
 
         else:
             abort(404)
