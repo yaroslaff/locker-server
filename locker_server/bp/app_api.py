@@ -102,10 +102,10 @@ def delete(path):
                 if 'rmdir' in request.headers:
                     if 'recursive' in request.headers:
                         shutil.rmtree(filepath)
-                        return f'Deleted (recursively) dir {path}'
+                        return f'Deleted (recursively) dir {path}\n'
                     else:
                         os.rmdir(filepath)
-                        return f'Deleted dir {path}'
+                        return f'Deleted dir {path}\n'
 
         else:
             abort(404)
@@ -133,7 +133,7 @@ def post(path):
                 p.mkdir()
                 return Response(f'Created {path}\n')
             else:
-                return f'Already exists {path}'
+                return f'Already exists {path}\n'
 
     except (UserHomeRootViolation, UserHomePermissionViolation) as e:
         print(f'{type(e)} exception: {e}')
