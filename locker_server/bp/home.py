@@ -1,3 +1,4 @@
+from locker_server.datafile.datafile import DataFile
 import os
 import json
 
@@ -9,7 +10,8 @@ from ..user import User, UserNotFound, UserHomeRootViolation, UserHomePermission
 from ..app import App
 from ..myutils import fileheaders, filelist
 # from datafile.flagfile import FlagFile
-from ..datafile import FlagFile, DataFileInvalidFlag
+from ..datafile import FlagFile, DataFileInvalidFlag, DataFileContentError
+from ..exceptions import FileContentError
 
 home_bp = Blueprint('home', __name__)
 
@@ -158,10 +160,39 @@ def options(path):
     app.check_origin()
     response = app.cross_response(response='')
     if path.startswith('rw/'):
-        response.headers['Access-Control-Allow-Methods'] = 'GET, PUT'
-        response.headers['Access-Control-Allow-Headers'] = 'X-Token'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, PUT, POST'
+        response.headers['Access-Control-Allow-Headers'] = 'X-Token, Content-Type'
     elif path.startswith('r/'):
         response.headers['Access-Control-Allow-Methods'] = 'GET'
         response.headers['Access-Control-Allow-Headers'] = 'X-Token'
 
     return response
+
+
+#### POST ####
+@home_bp.route('/', defaults={'path': ''}, methods=['POST'])
+@home_bp.route('/<path:path>', methods=['POST'])
+# @login_required
+def post(path):
+    app = App()
+    app.check_origin()
+    response = app.cross_response(response='OK')
+
+    data = request.json
+
+    action = data['action']
+    
+    if action == 'append':
+        append(path, data)
+        return response
+
+def append(path, data):
+    localpath = current_user.localpath(path,'w')
+    try:
+        with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
+            content = f.data
+            content.append(data['e'])
+            f.data = content
+
+    except DataFileContentError as e:
+        raise FileContentError(f'Content error with file {request.path!r}')

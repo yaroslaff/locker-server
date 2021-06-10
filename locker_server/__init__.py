@@ -26,7 +26,7 @@ from flask_login import (
 
 # Internal imports
 # from db import init_db_command
-from locker_server.datafile import UserFile
+from locker_server.datafile import BindingsFile
 
 from locker_server.config import config
 from locker_server.user import User, UserNotFound
@@ -156,7 +156,7 @@ def index():
 @login_required
 def get_bindings():
     app = App(request.host)
-    with UserFile(app.localpath('etc/users.json')) as uf:
+    with BindingsFile(app.localpath('etc/users.json')) as uf:
         bindings = uf.get_user_bindings(current_user.id)
         return app.cross_response(json.dumps(bindings), mimetype='application/json')
 
@@ -200,7 +200,9 @@ def logout():
 
 @flask_app.errorhandler(LockerException)
 def handle_locker_exception(error):
+    app = App(request.host)
     # print(f"HANDLE EXCEPTION {type(error)}: {error.status_code}")
     response = Response(error.message)
     response.status_code = error.status
-    return response
+    # return response
+    return app.cross_response(status=error.status, response=error.message)

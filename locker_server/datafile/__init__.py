@@ -7,7 +7,7 @@ import time
 
 from .flagfile import FlagFile
 from .datafile import DataFile
-from .userfile import UserFile
+from .bindings import BindingsFile
 from .exceptions import *
 
 

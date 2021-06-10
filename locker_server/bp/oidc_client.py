@@ -21,7 +21,7 @@ from flask_login import (
 
 from ..app import App
 from ..user import User, UserNotFound
-from ..datafile import UserFile
+from ..datafile import BindingsFile
 from ..config import config
 
 oidc_bp = Blueprint('oidc', __name__)
@@ -80,7 +80,7 @@ def login(provider):
     )
     session['oidc_provider'] = provider
     session['oidc_return'] = request.args.get('return')
-    
+    print("ZZZ save return:", request.args.get('return'))
     return redirect(request_uri)
 
 @oidc_bp.route("/bind/<provider>")
@@ -169,7 +169,7 @@ def callback():
     # Create a user in your db with the information provided
     # by Google
 
-    with UserFile(app.localpath('etc/users.json')) as uf:
+    with BindingsFile(app.localpath('etc/users.json')) as uf:
         username = uf.get_binding(provider, sub)
 
     if username:
@@ -192,13 +192,13 @@ def callback():
         if current_user.is_authenticated:
             # make new binding
             if session.get('want_bind') == provider:
-                with UserFile(app.localpath('etc/users.json'), 'rw') as uf:
+                with BindingsFile(app.localpath('etc/users.json'), 'rw') as uf:
                     uf.bind(provider, sub, current_user.id)
                 del session['want_bind']
 
         else:
             # create user
-            with UserFile(app.localpath('etc/users.json'), 'rw') as uf:
+            with BindingsFile(app.localpath('etc/users.json'), 'rw') as uf:
                 username = uf.create(provider, sub)
 
             user = User(
@@ -211,5 +211,4 @@ def callback():
             session['userinfo'] = userinfo
             session.permanent = True
 
-    # print("return to:", app_opts['return_url'])
     return redirect(session['oidc_return'] or app_opts['return_url'])

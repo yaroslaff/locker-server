@@ -5,7 +5,7 @@ import re
 import datetime
 
 from flask import abort, request, Response, current_app
-from .exceptions import AppUnconfigured, AppNotFound
+from .exceptions import AppUnconfigured, AppNotFound, AppBadDomainName
 
 from .config import config
 
@@ -85,7 +85,11 @@ class App:
 
         leftpart = url.split('.')[0]
 
-        self.appname, self.username = leftpart.rsplit('-', 1)
+        try:
+            self.appname, self.username = leftpart.rsplit('-', 1)
+        except ValueError:
+            raise AppBadDomainName(f'Bad app domain name {leftpart}')
+
 
         assert('/' not in self.appname)
         assert('/' not in self.username)
@@ -182,6 +186,8 @@ class App:
             'Access-Control-Allow-Origin': origin,
             'Access-Control-Allow-Credentials': 'true'
         }
+
+
         return Response(response=response, status=status, headers = headers, mimetype=mimetype)
 
     def log(self, msg):

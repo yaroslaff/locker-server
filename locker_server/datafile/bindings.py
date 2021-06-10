@@ -1,6 +1,12 @@
 from .datafile import DataFile
 
-class UserFile(DataFile):
+"""
+
+    File with user list and bingings
+
+"""
+
+class BindingsFile(DataFile):
     def get_binding(self, provider, sub):
         """return username based on provider/uid or None"""
         try:

@@ -9,3 +9,6 @@ class DataFileInvalidFlag(DataFileException):
 
 class DateFileInvalidOperation(DataFileException):
     pass
+
+class DataFileContentError(DataFileException):
+    pass

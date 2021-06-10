@@ -1,26 +1,52 @@
 import json
 import fcntl
+from typing import DefaultDict
 
-from .exceptions import DataFileException,DataFileReadOnlyException
+from .exceptions import (
+    DataFileException,
+    DataFileReadOnlyException, 
+    DataFileContentError
+    )
+
+from ..exceptions import SysFilePermissionError
+
 
 
 class DataFile():
 
-    def __init__(self, path, mode='r'):
+    def __init__(self, path, mode='r', default=None):
         assert(mode == 'r' or mode == 'rw')
         self.path = path
         self.mode = mode
         self.updated = False
         self.fh = None
+        self.default = default
+        self.created = False
         
     def __enter__(self):        
         if self.mode == 'r':
             with open(self.path, 'r') as fh:
                 self._data = json.load(fh)
         else:
-            self.fh = open(self.path, 'r+')
+            try:
+                self.fh = open(self.path, 'r+')
+            except FileNotFoundError as e:
+                if self.default is not None:
+                    self.created = True
+                    self.fh = open(self.path, "w")
+                else:
+                    raise
+            except PermissionError as e:
+                raise SysFilePermissionError(f"System Error, permission error")
+
             fcntl.flock(self.fh, fcntl.LOCK_EX)
-            self._data = json.load(self.fh) 
+            if self.created:
+                self._data = self.default
+            else:
+                try:
+                    self._data = json.load(self.fh) 
+                except json.decoder.JSONDecodeError as e:
+                    raise DataFileContentError
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
