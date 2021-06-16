@@ -80,7 +80,6 @@ def login(provider):
     )
     session['oidc_provider'] = provider
     session['oidc_return'] = request.args.get('return')
-    print("ZZZ save return:", request.args.get('return'))
     return redirect(request_uri)
 
 @oidc_bp.route("/bind/<provider>")

@@ -139,7 +139,7 @@ class App:
             try:
                 c = config['VENDOR_CREDENTIALS'][provider] 
             except KeyError as e:
-                abort(Response(status=404, response='No such provider in vendor oidc_credentials'))
+                abort(Response(status=404, response=f'No provider {provider!r} in vendor oidc_credentials'))
             return c
 
         # get provider from app 

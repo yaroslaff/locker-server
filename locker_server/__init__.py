@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 -u
 
 # Python standard libraries
 import json
@@ -36,11 +36,20 @@ from locker_server.bp.oidc_client import oidc_bp
 from locker_server.bp.home import home_bp
 from locker_server.bp.app_api import api_bp
 from locker_server.bp.var import var_bp
-from .exceptions import LockerException
+from .exceptions import LockerException, AppNotFound
 
 
 # Only for localhost testing
 # os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+log = logging.getLogger()
+if os.getenv('LOCKER_DEBUG'):    
+    err = logging.StreamHandler(stream=sys.stdout)
+    err.setLevel(logging.DEBUG)
+    log.addHandler(err)
+    log.setLevel(logging.DEBUG)
+
+logging.debug('debug logging')
 
 # Flask app setup
 flask_app = Flask(__name__)
@@ -139,18 +148,7 @@ def diag():
 
 @flask_app.route("/")
 def index():
-    app = App(request.host)
-
-    if current_user.is_authenticated:
-        userinfo = session.get('userinfo', None)
-        return (
-            "<p>Hello, {}! App: {}. You're ({}) logged in! Email: {}</p>".
-                format( app.name, userinfo['name'], userinfo['id'], userinfo['email']
-            )
-        )
-    else:        
-        return Response(status=400, response='Not authenticated (index)')
-
+    return ''
 
 @flask_app.route('/get_bindings', methods=['GET'])
 @login_required
@@ -166,22 +164,34 @@ def get_bindings():
 # @login_required
 def authenticated():
 
-    app = App(request.host)
+    reply = {'status': False, 'messages': []}
+
     try:
-        origin = request.headers['Origin']
-    except KeyError:
-        return Response(status=400, response='Missing "Origin" header')
 
-    app.check_origin()
+        try:
+            app = App(request.host)
+        except AppNotFound:
+            reply['messages'].append(f'Not found app {request.host}')
+            raise Exception
 
-    if current_user.is_authenticated:
-        response = Response(json.dumps(True))
-    else:
-        response = Response(json.dumps(False))
+        try:
+            origin = request.headers['Origin']
+        except KeyError:
+            reply['messages'].append(f'Request missing Origin header')
 
-    response.headers['Access-Control-Allow-Origin'] = origin
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    return response
+        # app.check_origin()
+        if not app.allowed_origin(origin):
+            reply['messages'].append(f'Origin {origin} is incorrect')
+            raise Exception
+
+        reply['status'] = current_user.is_authenticated
+        # reply['messages'].append(f'Authenticated: {reply["status"]}')
+
+    finally:
+        response = Response(json.dumps(reply, indent=4))
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response
 
 @flask_app.route("/logout", methods=['POST'])
 def logout():

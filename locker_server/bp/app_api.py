@@ -1,7 +1,9 @@
 import os
 import pathlib
 import shutil
+import fcntl
 import json
+from itertools import islice
 
 from flask import Blueprint, request, abort, send_file, Response, make_response
 from flask_login import login_required, current_user
@@ -123,13 +125,21 @@ def delete(path):
 @api_bp.route('/<path:path>', methods=['POST'])
 def post(path):
     app = App()
+    
     app.check_key()
 
     if '..' in path:
         abort(404)
 
     try:
-        if 'cmd' in request.form and request.form['cmd'] == "mkdir":
+        payload = request.get_json()
+        # cmd = request.form['cmd']
+        cmd = payload['cmd']
+    except ValueError as e:
+        abort(400, 'Missing cmd')
+
+    try:
+        if cmd == "mkdir":
             p = pathlib.Path(app.localpath(path))
             if not p.exists():
                 p.mkdir()
@@ -137,6 +147,74 @@ def post(path):
             else:
                 return f'Already exists {path}\n'
 
+        elif cmd == "get_flags":
+            flag = payload.get('flag','flag')
+            n = int(payload.get('n', 10))    
+            return get_flags(app, path, flag, n)
+            
+        elif cmd == "drop_flags":
+            flag = payload.get('flag','flag')
+            droplist = payload.get('droplist','[]')
+            return drop_flags(app, path, flag, droplist)
+
+
     except (UserHomeRootViolation, UserHomePermissionViolation) as e:
         print(f'{type(e)} exception: {e}')
         abort(403)
+
+
+#
+# support functions
+#
+
+def get_flags(app, path, flag, n):
+    data = list()
+    if n>50:
+        n=50
+
+    lpath = app.localpath(path)
+    try:
+        with open(lpath,"r") as fh:
+            flags = json.load(fh)
+        f = flags['flags'][flag]
+        data = list(flags['flags'][flag].items())[:n]
+    except FileNotFoundError:
+        abort(404, "No such file")
+    except KeyError:
+        abort(404, "No such flag")    
+    return json.dumps(data, indent=4)
+
+def drop_flags(app, path, flag, droplist):
+    lpath = app.localpath(path)
+
+    result = {
+        'dropped': [],
+        'refreshed': [],
+        'miss': []
+    }
+    with open(lpath,"r+") as fh:
+        try:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+            flags = json.load(fh)
+            f = flags['flags'][flag]
+            for u, ts in droplist:
+                
+                if not u in f:
+                    result['miss'].append(u)
+                    continue
+                
+                if ts is None or ts==f[u]:
+                    del f[u]
+                    result['dropped'].append(u)
+                    continue
+
+                result['refreshed'].append(u)
+            print(flags)
+            if result['dropped']:
+                fh.seek(0)
+                json.dump(flags, fh, indent=4, sort_keys=True)
+            fh.truncate()
+        except FileNotFoundError:
+            abort(404, "No such flags file")    
+
+        return json.dumps(result, indent=4)
