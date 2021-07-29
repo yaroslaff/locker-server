@@ -52,6 +52,7 @@ config = {
 
 # update config
 for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
+    print("Load local config from file:", path)
     with open(path, "r") as fh:
         cfg = yaml.full_load(fh)
         config.update(cfg)
