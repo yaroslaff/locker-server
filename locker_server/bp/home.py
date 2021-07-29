@@ -1,6 +1,7 @@
 from locker_server.datafile.datafile import DataFile
 import os
 import json
+import time
 
 from flask import Blueprint, request, abort, send_file, Response, make_response
 from flask.globals import current_app
@@ -187,6 +188,14 @@ def post(path):
         return response
 
 def append(path, data):
+    
+    
+    # update magic fields in data[e]
+    for key in data['e']:
+        if key.startswith('_'):
+            if key == '_timestamp':
+                data['e'][key] = int(time.time())
+    
     localpath = current_user.localpath(path,'w')
     try:
         with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
