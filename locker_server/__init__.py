@@ -178,6 +178,7 @@ def authenticated():
             origin = request.headers['Origin']
         except KeyError:
             reply['messages'].append(f'Request missing Origin header')
+            origin = None
 
         # app.check_origin()
         if not app.allowed_origin(origin):
@@ -189,8 +190,9 @@ def authenticated():
 
     finally:
         response = Response(json.dumps(reply, indent=4))
-        response.headers['Access-Control-Allow-Origin'] = origin
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        if origin:
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
         return response
 
 @flask_app.route("/logout", methods=['POST'])
