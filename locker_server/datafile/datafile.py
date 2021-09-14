@@ -39,12 +39,17 @@ class DataFile():
             except PermissionError as e:
                 raise SysFilePermissionError(f"System Error, permission error")
 
+
             fcntl.flock(self.fh, fcntl.LOCK_EX)
             if self.created:
                 self._data = self.default
             else:
                 try:
-                    self._data = json.load(self.fh) 
+                    payload = self.fh.read()
+                    if payload:
+                        self._data = json.loads(payload) 
+                    else:
+                        self._data = self.default
                 except json.decoder.JSONDecodeError as e:
                     raise DataFileContentError
         return self
