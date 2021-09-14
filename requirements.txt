@@ -1,0 +1,8 @@
+python-dotenv
+flask
+flask-login
+oauthlib
+flask-session
+pyyaml
+redis
+requests
