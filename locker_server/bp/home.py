@@ -2,6 +2,8 @@ from locker_server.datafile.datafile import DataFile
 import os
 import json
 import time
+import traceback
+
 
 from flask import Blueprint, request, abort, send_file, Response, make_response
 from flask.globals import current_app
@@ -184,22 +186,32 @@ def post(path):
     action = data['action']
     
     if action == 'append':
-        append(path, data)
+        try:
+            append(path, data)
+        except TypeError as e:
+            traceback.print_exc()
+            response = app.cross_response(status=400, response='Operation failed')
+
         return response
 
 def append(path, data):
-    
-    
-    # update magic fields in data[e]
-    for key in data['e']:
-        if key.startswith('_'):
-            if key == '_timestamp':
-                data['e'][key] = int(time.time())
-    
     localpath = current_user.localpath(path,'w')
     try:
         with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
             content = f.data
+
+            # update magic fields in data[e]
+            for key in data['e']:
+                if key.startswith('_'):
+                    if key == '_timestamp':
+                        data['e'][key] = int(time.time())
+                    if key == '_id':
+                        if len(content):
+                            max_e = max(content, key = lambda x: x.get('_id', 0))
+                            data['e'][key] = max_e['_id'] + 1
+                        else:
+                            data['e'][key] = 0
+
             content.append(data['e'])
             f.data = content
 
