@@ -9,6 +9,7 @@ from flask_login import login_required, current_user
 from ..user import User, UserNotFound, UserHomeRootViolation, UserHomePermissionViolation
 from ..app import App
 from ..datafile import FlagFile, DataFileInvalidFlag
+from ..appflagfile import AppFlagFile 
 from ..exceptions import SysFilePermissionError
 
 var_bp = Blueprint('var', __name__)
@@ -23,7 +24,7 @@ def set_flag(app, path):
         response.data = 'not auth'
         abort(response)
 
-    with FlagFile(path,"rw") as file:
+    with AppFlagFile(app, path,"rw") as file:
         if not file.user_action_allowed('set_flag'):
             app.abort(403, f'This action not allowed for {path}')
 

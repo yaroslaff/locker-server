@@ -13,6 +13,7 @@ import time
 import traceback
 from urllib.parse import urlparse
 from logging.handlers import SMTPHandler
+import redis
 
 from flask import Flask, make_response, redirect, request, url_for, abort, Response, session, jsonify
 from flask_session import Session
@@ -38,6 +39,15 @@ from locker_server.bp.app_api import api_bp
 from locker_server.bp.var import var_bp
 from .exceptions import LockerException, AppNotFound
 
+from . serverinstance import ServerInstance
+
+si = ServerInstance()
+#print("__init__ si id:", id(si))
+
+si.redis = redis.Redis(decode_responses=True)
+si.config = config
+
+# print(si.redis)
 
 # Only for localhost testing
 # os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -186,6 +196,7 @@ def authenticated():
             raise Exception
 
         reply['status'] = current_user.is_authenticated
+        
         # reply['messages'].append(f'Authenticated: {reply["status"]}')
 
     finally:

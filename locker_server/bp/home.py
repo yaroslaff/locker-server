@@ -192,7 +192,11 @@ def post(path):
             traceback.print_exc()
             response = app.cross_response(status=400, response='Operation failed')
 
-        return response
+    elif action == 'delete':
+        n = delete(path, data)
+        response.data = str(n)
+
+    return response
 
 def append(path, data):
     localpath = current_user.localpath(path,'w')
@@ -217,3 +221,19 @@ def append(path, data):
 
     except DataFileContentError as e:
         raise FileContentError(f'Content error with file {request.path!r}')
+
+def delete(path, data):
+
+    localpath = current_user.localpath(path,'w')
+    with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
+        content = f.data
+
+        _id = data['e']['_id']
+
+        sz = len(content)
+
+        content = list(filter(lambda d: d['_id']!=_id, content))
+
+        f.data = content
+        return sz - len(content)
+        
