@@ -185,20 +185,20 @@ def post(path):
 
     action = data['action']
     
-    if action == 'append':
+    if action == 'list_append':
         try:
-            append(path, data)
+            list_append(path, data)
         except TypeError as e:
             traceback.print_exc()
             response = app.cross_response(status=400, response='Operation failed')
 
-    elif action == 'delete':
-        n = delete(path, data)
+    elif action == 'list_delete':
+        n = list_delete(path, data)
         response.data = str(n)
 
     return response
 
-def append(path, data):
+def list_append(path, data):
     localpath = current_user.localpath(path,'w')
     try:
         with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
@@ -222,7 +222,7 @@ def append(path, data):
     except DataFileContentError as e:
         raise FileContentError(f'Content error with file {request.path!r}')
 
-def delete(path, data):
+def list_delete(path, data):
 
     localpath = current_user.localpath(path,'w')
     with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
