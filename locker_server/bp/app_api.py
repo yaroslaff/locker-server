@@ -4,6 +4,7 @@ import shutil
 import fcntl
 import json
 from itertools import islice
+import traceback
 
 from flask import Blueprint, request, abort, send_file, Response, make_response
 from flask_login import login_required, current_user
@@ -12,6 +13,7 @@ from ..user import User, UserNotFound, UserHomeRootViolation, UserHomePermission
 from ..app import App
 
 from ..myutils import filelist, fileheaders
+from ..fileops import list_append, list_delete
 
 api_bp = Blueprint('api', __name__)
 
@@ -157,6 +159,19 @@ def post(path):
             droplist = payload.get('droplist','[]')
             return drop_flags(app, path, flag, droplist)
 
+        elif cmd == "list_append":
+            localpath = app.localpath(path)
+            try:
+                list_append(localpath, request.json)
+            except TypeError as e:
+                return 'Operation failed', 400
+            return 'OK'
+
+        elif cmd == "list_delete":
+            localpath = app.localpath(path)
+            n = list_delete(localpath, request.json)
+            return str(n)
+
 
     except (UserHomeRootViolation, UserHomePermissionViolation) as e:
         print(f'{type(e)} exception: {e}')
@@ -209,7 +224,7 @@ def drop_flags(app, path, flag, droplist):
                     continue
 
                 result['refreshed'].append(u)
-            print(flags)
+            # print(flags)
             if result['dropped']:
                 fh.seek(0)
                 json.dump(flags, fh, indent=4, sort_keys=True)

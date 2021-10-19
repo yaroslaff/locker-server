@@ -1,4 +1,4 @@
-from locker_server.datafile.datafile import DataFile
+# from locker_server.datafile.datafile import DataFile
 import os
 import json
 import time
@@ -15,6 +15,7 @@ from ..myutils import fileheaders, filelist
 # from datafile.flagfile import FlagFile
 from ..datafile import FlagFile, DataFileInvalidFlag, DataFileContentError
 from ..exceptions import FileContentError
+from ..fileops import list_append, list_delete
 
 home_bp = Blueprint('home', __name__)
 
@@ -186,54 +187,17 @@ def post(path):
     action = data['action']
     
     if action == 'list_append':
+        localpath = current_user.localpath(path,'w')
         try:
-            list_append(path, data)
+            list_append(localpath, data)
         except TypeError as e:
             traceback.print_exc()
             response = app.cross_response(status=400, response='Operation failed')
 
     elif action == 'list_delete':
-        n = list_delete(path, data)
+        localpath = current_user.localpath(path,'w')
+        n = list_delete(localpath, data)
         response.data = str(n)
 
     return response
 
-def list_append(path, data):
-    localpath = current_user.localpath(path,'w')
-    try:
-        with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
-            content = f.data
-
-            # update magic fields in data[e]
-            for key in data['e']:
-                if key.startswith('_'):
-                    if key == '_timestamp':
-                        data['e'][key] = int(time.time())
-                    if key == '_id':
-                        if len(content):
-                            max_e = max(content, key = lambda x: x.get('_id', 0))
-                            data['e'][key] = max_e['_id'] + 1
-                        else:
-                            data['e'][key] = 0
-
-            content.append(data['e'])
-            f.data = content
-
-    except DataFileContentError as e:
-        raise FileContentError(f'Content error with file {request.path!r}')
-
-def list_delete(path, data):
-
-    localpath = current_user.localpath(path,'w')
-    with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
-        content = f.data
-
-        _id = data['e']['_id']
-
-        sz = len(content)
-
-        content = list(filter(lambda d: d['_id']!=_id, content))
-
-        f.data = content
-        return sz - len(content)
-        
