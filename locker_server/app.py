@@ -5,7 +5,11 @@ import re
 import datetime
 
 from flask import abort, request, Response, current_app
-from .exceptions import AppUnconfigured, AppNotFound, AppBadDomainName
+from flask_login import current_user
+
+from .datafile import DataFileInvalidFlag
+from .appflagfile import AppFlagFile
+from .exceptions import AppUnconfigured, AppNotFound, AppBadDomainName, AppRestrictions
 
 from .config import config
 
@@ -14,9 +18,26 @@ class QueryOptions:
         self.app = app
         self.data = data or dict()
 
+    def validate_request(self):
+        max_cl = self.get_option('max_content_length')
+        if max_cl is not None and request.content_length > max_cl:
+            raise AppRestrictions(f'Content-Length ({request.content_length}) is too big', status=403)
+
+    def postprocess(self):
+        sf = self.get_option('set_flag')
+        if sf:
+            filepath = self.app.localpath('var/'+sf['file'])
+
+            try:
+                with AppFlagFile(self.app, filepath,"rw") as file:
+                    file.set_flag(sf['flag'], current_user.id)
+            except DataFileInvalidFlag:
+                current_user.app.abort(403, 'Invalid flag')            
+
+
     def match(self, path):
-        if 'filter_method' in self.data:
-            if self.data['filter_method'] != request.method:
+        if 'filter_methods' in self.data:
+            if request.method not in self.data['filter_methods']:
                 return False
         
         if 'filter_path' in self.data:
@@ -202,6 +223,7 @@ class App:
         return os.path.relpath(path, self.root)
 
     def query_options(self, path):
+        """ return first matching QO """
         
         options = self.get_config('etc/options.json')
         

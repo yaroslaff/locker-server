@@ -22,5 +22,8 @@ class AppBadDomainName(LockerException):
 class FileContentError(LockerException):
     status = 409
 
+class AppRestrictions(LockerException):
+    pass
+
 class SysFilePermissionError(LockerException):
     pass

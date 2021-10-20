@@ -86,13 +86,10 @@ def put(path):
         filepath = current_user.localpath(path, 'w')
 
         qo = current_user.app.query_options(filepath)
+        qo.validate_request()
 
         if not os.path.exists(filepath) and not qo.get_option('create'):
             return current_user.app.abort(403, 'Cannot create new files there')
-
-        max_cl = qo.get_option('max_content_length')
-        if max_cl and request.content_length > max_cl:
-            return current_user.app.abort(403, f'Content-Length ({request.content_length}) is too big')
 
         newsize = current_user.disk_usage(skip=[filepath])
         
@@ -105,16 +102,7 @@ def put(path):
         with open(filepath, "wb") as fh:
             fh.write(request.get_data())
 
-        sf = qo.get_option('set_flag')
-
-        if sf:
-            filepath = current_user.app.localpath('var/'+sf['file'])
-
-            try:
-                with FlagFile(filepath,"rw") as file:
-                    file.set_flag(sf['flag'], current_user.id)
-            except DataFileInvalidFlag:
-                current_user.app.abort(403, 'Invalid flag')            
+        qo.postprocess()
 
         response = Response(status=200, response='OK')
         response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
@@ -182,6 +170,12 @@ def post(path):
     app.check_origin()
     response = app.cross_response(response='OK')
 
+    current_user.app.check_origin()
+
+    filepath = current_user.localpath(path, 'w')
+    qo = current_user.app.query_options(filepath)
+    qo.validate_request()
+
     data = request.json
 
     action = data['action']
@@ -199,5 +193,6 @@ def post(path):
         n = list_delete(localpath, data)
         response.data = str(n)
 
+    qo.postprocess()
     return response
 
