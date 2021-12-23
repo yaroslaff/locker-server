@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-ExecStart=/usr/bin/uwsgi /opt/venv/locker-server/locker/uwsgi/locker.ini
+ExecStart=/opt/venv/locker-server/bin/uwsgi /opt/venv/locker-server/locker/uwsgi/locker.ini
 RuntimeDirectory=locker-server
 RuntimeDirectoryMode=0755
 EnvironmentFile=/etc/default/locker-server

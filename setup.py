@@ -44,7 +44,8 @@ setup(name='locker-server',
             'requests',
             'pyyaml',
             'redis',
-            'oauthlib'],
+            'oauthlib',
+            'uwsgi'],
 
         zip_safe=True
       )

@@ -29,8 +29,8 @@ def parse_args():
     def_secret = os.urandom(16)
 
     parser = argparse.ArgumentParser(description='locker server')
-    parser.add_argument('--secret', default=os.getenv('SECRET', def_secret), 
-        help='secret key')
+    #parser.add_argument('--secret', default=os.getenv('SECRET', def_secret), 
+    #    help='secret key')
     parser.add_argument('--debug', default=False, action='store_true', 
         help='Run flask in debug mode')
     parser.add_argument('--opt', nargs='+', 

@@ -29,12 +29,28 @@ But if your application has no other special API (only public data + customer da
 # Quickstart
 
 ~~~
+
+# create virtualenv 
+python3 -m venv /opt/venv/locker-server
+. /opt/venv/locker-server/bin/activate
+
+# install from ypi
 pip3 install locker-server
 
-# If you dont have valid SSL cert, you may generate self-signed (yes, browser will alert, but you can skip alert). For production
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj '/CN=test.locker.lan'
+# alternative: install from github
+pip3 install git+https://github.com/yaroslaff/locker-server.git
 
-locker-server.py --opt APPS_PATH=/tmp/ CERT=cert.pem PRIVKEY=key.pem
+#### If you dont have valid SSL cert, you may generate self-signed (yes, browser will alert, but you can skip alert). For production
+###openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj '/CN=test.locker.lan'
+
+cat > /etc/default/locker-server <<EOF
+# locker env file
+LOCKER_APPS_PATH=/opt/locker-apps/
+LOCKER_LOCAL_CONFIG=/etc/locker/config.yml
+EOF
+
+
+### locker-server.py --opt APPS_PATH=/tmp/ CERT=cert.pem PRIVKEY=key.pem
 ~~~
 Now, configure test.locker.lan in `/etc/hosts` and visit https://test.locker.lan:5000/hello
 
