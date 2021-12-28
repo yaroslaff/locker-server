@@ -223,9 +223,10 @@ def logout():
 
 @flask_app.errorhandler(LockerException)
 def handle_locker_exception(error):
-    app = App(request.host)
-    # print(f"HANDLE EXCEPTION {type(error)}: {error.status_code}")
-    response = Response(error.message)
-    response.status_code = error.status
-    # return response
-    return app.cross_response(status=error.status, response=error.message)
+    origin = request.headers['Origin']
+    headers = {
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Credentials': 'true'
+    }
+
+    return Response(response=error.message, status=error.status, headers = headers, mimetype=mimetype)

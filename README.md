@@ -50,6 +50,11 @@ LOCKER_LOCAL_CONFIG=/etc/locker/config.yml
 EOF
 
 
+# If install to nginx, copy, edit and activate nginx config for sites
+cp /opt/venv/locker-server/locker/nginx/locker /etc/nginx/sites-available/
+cp /opt/venv/locker-server/locker/nginx/locker-https /etc/nginx/sites-available/
+
+
 ### locker-server.py --opt APPS_PATH=/tmp/ CERT=cert.pem PRIVKEY=key.pem
 ~~~
 Now, configure test.locker.lan in `/etc/hosts` and visit https://test.locker.lan:5000/hello

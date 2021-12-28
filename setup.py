@@ -7,7 +7,7 @@ def read(fname):
 
 
 setup(name='locker-server',
-        version='0.0.2',
+        version='0.0.3',
         description='locker OpenID Connect file server',
         url='https://github.com/yaroslaff/locker-server',
         author='Yaroslav Polyakov',
