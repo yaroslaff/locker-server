@@ -37,7 +37,7 @@ from locker_server.bp.oidc_client import oidc_bp
 from locker_server.bp.home import home_bp
 from locker_server.bp.app_api import api_bp
 from locker_server.bp.var import var_bp
-from .exceptions import LockerException, AppNotFound
+from .exceptions import AppBadDomainName, LockerException, AppNotFound
 
 from . serverinstance import ServerInstance
 
@@ -117,6 +117,10 @@ def diag():
         except AppNotFound as e:
             results['errors'].append('App not found')
             return jsonify(results)
+        except AppBadDomainName as e:
+            results['errors'].append('App bad domain name')
+            return jsonify(results)
+
 
         # app exists or exception handled
         print("diag app:", app)
