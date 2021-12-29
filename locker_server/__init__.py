@@ -111,7 +111,12 @@ def diag():
     results['info']['pwd'] = os.getcwd()
 
     try:
-        app = App(request.host)
+
+        try:
+            app = App(request.host)
+        except AppNotFound as e:
+            results['errors'].append('App not found')
+            return jsonify(results)
 
         # app exists or exception handled
         print("diag app:", app)
@@ -149,6 +154,7 @@ def diag():
 
     except (LockerException, Exception) as e:
         if not secure:
+            print("DIAG print_exc:")
             print(type(e), e)
             traceback.print_exc()
         results['errors'].append(str(e))
