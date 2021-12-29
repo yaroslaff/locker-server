@@ -123,6 +123,7 @@ class App:
         assert(os.path.abspath(self.root).startswith(os.path.abspath(self.apps_path)))
 
         if not self.exist():
+            self.log(f"path {self.root} not found on locker server")
             # abort(Response(f'App {self.name!r} not found', status=404))
             raise AppNotFound(f'App {self.name!r} not found', status=404)
         self.loaded_configs=dict()
@@ -212,7 +213,7 @@ class App:
         return Response(response=response, status=status, headers = headers, mimetype=mimetype)
 
     def log(self, msg):
-        print(f'a: {self.name}: {msg}')
+        print(f'LOG app: {self.name}: {msg}')
 
     def abort(self, status, text=None):
         response = self.cross_response(text, status)
