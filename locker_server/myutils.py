@@ -5,6 +5,10 @@ def shortdate(dt=None):
     dt = dt or datetime.datetime.now() 
     return dt.strftime("%Y/%m/%d %H:%M:%S") 
 
+def str2bool(s: str) -> bool:
+    """ True if string is yes/1/true/... """
+    return s.lower() in ['yes', '1', 'true', 'да', 'о, да, мой адмирал']
+
 def timesuffix(t: str):
 
     size = {

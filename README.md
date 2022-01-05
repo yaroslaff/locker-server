@@ -29,7 +29,6 @@ But if your application has no other special API (only public data + customer da
 # Quickstart
 
 ~~~
-
 # create virtualenv 
 python3 -m venv /opt/venv/locker-server
 . /opt/venv/locker-server/bin/activate
@@ -46,14 +45,29 @@ pip3 install git+https://github.com/yaroslaff/locker-server.git
 cat > /etc/default/locker-server <<EOF
 # locker env file
 LOCKER_APPS_PATH=/opt/locker-apps/
-LOCKER_LOCAL_CONFIG=/etc/locker/config.yml
+LOCKER_LOCAL_CONFIG=/etc/locker-server.yml
+LOCKER_DEBUG=1
 EOF
 
 
 # If install to nginx, copy, edit and activate nginx config for sites
 cp /opt/venv/locker-server/locker/nginx/locker /etc/nginx/sites-available/
 cp /opt/venv/locker-server/locker/nginx/locker-https /etc/nginx/sites-available/
+~~~
 
+Example locker-server.yml:
+~~~
+VENDOR_CREDENTIALS: 
+  google:
+    # Get your credentials in Google Developers Console
+    # https://console.developers.google.com/
+    DISCOVERY_URL: https://accounts.google.com/.well-known/openid-configuration
+    CLIENT_ID: 123-zzz.apps.googleusercontent.com
+    CLIENT_SECRET: zzzzzzzzzzz
+
+# Hostname, pointing to your server
+AUTH_HOST: auth.ll.www-security.net
+~~~
 
 ### locker-server.py --opt APPS_PATH=/tmp/ CERT=cert.pem PRIVKEY=key.pem
 ~~~

@@ -2,6 +2,7 @@ import json
 import yaml
 import os
 
+
 # Default config
 config = {
 
@@ -48,7 +49,6 @@ config = {
         }
     }
 }
-
 
 # update config
 for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:

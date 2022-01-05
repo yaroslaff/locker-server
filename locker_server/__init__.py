@@ -25,6 +25,8 @@ from flask_login import (
     logout_user,
 )
 
+from .myutils import (str2bool)
+
 # Internal imports
 # from db import init_db_command
 from locker_server.datafile import BindingsFile
@@ -53,7 +55,7 @@ si.config = config
 # os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 log = logging.getLogger()
-if os.getenv('LOCKER_DEBUG'):    
+if str2bool(os.getenv('LOCKER_DEBUG')):    
     err = logging.StreamHandler(stream=sys.stdout)
     err.setLevel(logging.DEBUG)
     log.addHandler(err)

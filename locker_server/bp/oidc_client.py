@@ -2,6 +2,7 @@
 import requests
 import json
 import os
+import logging
 import random
 import string
 from urllib.parse import urljoin, urlparse, urlunparse
@@ -28,6 +29,8 @@ oidc_bp = Blueprint('oidc', __name__)
 
 # r = redis.Redis(host='localhost', port=6379, db=0)
 r = redis.Redis(decode_responses=True)
+
+log = logging.getLogger()
 
 
 @oidc_bp.route('/hello')
