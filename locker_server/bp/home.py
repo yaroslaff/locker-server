@@ -166,6 +166,7 @@ def options(path):
 @home_bp.route('/<path:path>', methods=['POST'])
 # @login_required
 def post(path):
+    default = None
     app = App()
     app.check_origin()
     response = app.cross_response(response='OK')
@@ -181,9 +182,16 @@ def post(path):
     action = data['action']
     
     if action == 'list_append':
+        current_user.app.log(f"list_append {path}")
         localpath = current_user.localpath(path,'w')
+
+        if not os.path.exists(localpath):
+            def_path = current_user.app.def_path(path)
+            if os.path.exists(def_path):
+                default = current_user.app.get_json_file(def_path)
+
         try:
-            list_append(localpath, data)
+            list_append(localpath, data, default=default)
         except TypeError as e:
             traceback.print_exc()
             response = app.cross_response(status=400, response='Operation failed')
@@ -192,6 +200,8 @@ def post(path):
         localpath = current_user.localpath(path,'w')
         n = list_delete(localpath, data)
         response.data = str(n)
+    else:
+        current_user.app.log(f"Unknown action: {action!r}")
 
     qo.postprocess()
     return response

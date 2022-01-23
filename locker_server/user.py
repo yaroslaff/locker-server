@@ -35,6 +35,16 @@ class User(UserMixin):
         raise UserNotFound
 
     def localpath(self, subpath='', mode=None):
+        """
+            expands subpath to filesystempath and ensures
+            - file is user home (~) (if mode is None)
+            - file is in ~/r or ~/rw (if mode is 'r')
+            - file is in ~/rw (if mode is 'rw')
+
+            if more=='r' uses defpath is file is missing
+
+            raises
+        """
         path = os.path.join(self.root, subpath)
 
         if mode is None:
@@ -53,6 +63,13 @@ class User(UserMixin):
             raise UserHomeRootViolation()
 
         if any(os.path.abspath(path).startswith(r) for r in root_path_list):
+            if mode == 'r' and not os.path.exists(path):
+                # maybe use default
+                defpath = self.app.def_path(subpath)
+                if os.path.exists(defpath):
+                    return defpath
+            
+            # usual file, not default
             return path
 
         raise UserHomePermissionViolation

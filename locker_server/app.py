@@ -144,6 +144,13 @@ class App:
         assert(os.path.abspath(path).startswith(self.root))
         return path
 
+    def def_path(self, subpath):
+        # return default path for user file, e.g. "r/file.json"
+        defdir = os.path.join(self.root, 'etc/default')
+        defpath = os.path.join(defdir, subpath)
+        assert(os.path.abspath(defpath).startswith(defdir))
+        return defpath
+
     def get_json_file(self, path):
         with open(self.localpath(path), "r") as fh:
             return json.load(fh)

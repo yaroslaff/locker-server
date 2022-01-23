@@ -8,10 +8,10 @@ from .exceptions import FileContentError
     lower-level file operations without any access-control
 """
 
-def list_append(localpath, data):
+def list_append(localpath, data, default=None):
     # localpath = current_user.localpath(path,'w')
     try:
-        with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
+        with DataFile(localpath, 'rw', default=default) as f:
             content = f.data
 
             # update magic fields in data[e]
@@ -32,13 +32,13 @@ def list_append(localpath, data):
     except DataFileContentError as e:
         raise FileContentError(f'Content error with file {request.path!r}')
 
-def list_delete(localpath, data):
+def list_delete(localpath, data, default=None):
 
     # localpath = current_user.localpath(path,'w')
     with DataFile(localpath, 'rw', default=data.get('default', None)) as f:
         content = f.data
 
-        _id = data['e']['_id']
+        _id = data['_id']
 
         sz = len(content)
 
