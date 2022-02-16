@@ -196,7 +196,8 @@ def index():
 @flask_app.route("/set_roomspace_secret", methods=['POST'])
 def set_roomspace_secret():
     app = App(request.host)
-    si.redis.set(f'ws-emit::secret::{app.roomspace}', request.POST.get('secret'))
+    secret = request.json['secret']
+    si.redis.set(f'ws-emit::secret::{app.roomspace}', secret)
     return ''
 
 
