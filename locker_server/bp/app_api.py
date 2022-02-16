@@ -21,10 +21,12 @@ api_bp = Blueprint('api', __name__)
 @api_bp.route('/', defaults={'path': ''}, methods=['GET', 'HEAD'])
 @api_bp.route('/<path:path>', methods=['GET', 'HEAD'])
 def get(path):
-    app = App()
+    app = App()    
     app.check_key()
     if '..' in path:
         abort(404)
+
+    app.log(f"GET {path}")
 
     # security checks
     # if request.method in ['PUT', 'DELETE']
