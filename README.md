@@ -33,7 +33,7 @@ But if your application has no other special API (only public data + customer da
 python3 -m venv /opt/venv/locker-server
 . /opt/venv/locker-server/bin/activate
 
-# install from ypi
+# install from pypi
 pip3 install locker-server
 
 # alternative: install from github
