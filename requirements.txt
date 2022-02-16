@@ -6,3 +6,4 @@ flask-session
 pyyaml
 redis
 requests
+Flask_SocketIO

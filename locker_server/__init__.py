@@ -25,6 +25,8 @@ from flask_login import (
     logout_user,
 )
 
+from flask_socketio import SocketIO
+
 from .myutils import (str2bool)
 
 # Internal imports
@@ -43,11 +45,15 @@ from .exceptions import AppBadDomainName, LockerException, AppNotFound
 
 from . serverinstance import ServerInstance
 
+
+
 si = ServerInstance()
 #print("__init__ si id:", id(si))
 
 si.redis = redis.Redis(decode_responses=True)
 si.config = config
+
+si.socketio = SocketIO(message_queue = "redis://")
 
 # print(si.redis)
 
@@ -98,6 +104,20 @@ def load_user(user_id):
 @flask_app.route("/hello")
 def hello():
     return 'Hello'
+
+@flask_app.route("/pubconf")
+def pubconf():
+    try:
+        origin = request.headers['Origin']
+    except KeyError:
+        origin = None
+
+    response = Response(json.dumps(config['PUBCONF'], indent=4))
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+
+    return response
 
 @flask_app.route('/diag')
 # @login_required

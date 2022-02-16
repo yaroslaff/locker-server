@@ -7,6 +7,8 @@ def shortdate(dt=None):
 
 def str2bool(s: str) -> bool:
     """ True if string is yes/1/true/... """
+    if s is None:
+        return False
     return s.lower() in ['yes', '1', 'true', 'да', 'о, да, мой адмирал']
 
 def timesuffix(t: str):

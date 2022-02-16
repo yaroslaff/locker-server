@@ -45,7 +45,8 @@ setup(name='locker-server',
             'pyyaml',
             'redis',
             'oauthlib',
-            'uwsgi'],
+            'uwsgi',
+            'flask-socketio'],
 
         zip_safe=True
       )

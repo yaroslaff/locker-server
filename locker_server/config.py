@@ -1,6 +1,7 @@
 import json
 import yaml
 import os
+import socket
 
 
 # Default config
@@ -60,5 +61,9 @@ for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
 # fix config
 if config['APPS_PATH']:
     config['APPS_PATH'] = os.path.expanduser(config['APPS_PATH'])
+
+pubconf = config['PUBCONF']
+if not pubconf.get('hostname'):
+    pubconf['hostname'] = socket.gethostname()
 
 
