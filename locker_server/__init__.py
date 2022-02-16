@@ -193,6 +193,13 @@ def diag():
 def index():
     return ''
 
+@flask_app.route("/set_roomspace_secret", methods=['POST'])
+def set_roomspace_secret():
+    app = App(request.host)
+    si.redis.set(f'ws-emit::secret::{app.roomspace}', request.POST.get('secret'))
+    return ''
+
+
 @flask_app.route('/get_bindings', methods=['GET'])
 @login_required
 def get_bindings():

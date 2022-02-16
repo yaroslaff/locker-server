@@ -123,6 +123,8 @@ class App:
         assert('.' not in self.username)
 
         self.name = '.'.join([self.username, self.appname])
+        self.roomspace = f'{self.appname}-{self.username}'
+        self.logroomname = f'{self.roomspace}::logs'
         self.root = os.path.join(self.apps_path, self.username, self.appname)
         
         assert(os.path.abspath(self.root).startswith(os.path.abspath(self.apps_path)))
@@ -226,7 +228,7 @@ class App:
 
     def log(self, msg):
         print(f'LOG app: {self.name}: {msg}')
-        si.socketio.emit('log', msg, room=self.name)
+        si.socketio.emit('log', msg, room=self.logroomname)
 
     def abort(self, status, text=None):
         response = self.cross_response(text, status)
