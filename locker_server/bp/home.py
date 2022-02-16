@@ -28,6 +28,8 @@ def get(path):
     if '..' in path:
         abort(404)
 
+    current_user.app.log(f"GET {path} (home)")
+
     # security checks
     # if request.method in ['PUT', 'DELETE']
     try:
