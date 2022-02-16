@@ -146,6 +146,7 @@ def diag():
 
         # app exists or exception handled
         print("diag app:", app)
+        app.log("test log message from /diag")
 
         try:
             options = app.get_config('etc/options.json')        

@@ -29,6 +29,9 @@ But if your application has no other special API (only public data + customer da
 # Quickstart
 
 ~~~
+# install redis
+apt install redis-server
+
 # create virtualenv 
 python3 -m venv /opt/venv/locker-server
 . /opt/venv/locker-server/bin/activate
@@ -69,13 +72,37 @@ VENDOR_CREDENTIALS:
 AUTH_HOST: auth.ll.www-security.net
 ~~~
 
-### locker-server.py --opt APPS_PATH=/tmp/ CERT=cert.pem PRIVKEY=key.pem
+Install [locker-admin](https://github.com/yaroslaff/locker-admin):
 ~~~
-Now, configure test.locker.lan in `/etc/hosts` and visit https://test.locker.lan:5000/hello
+pip3 install git+https://github.com/yaroslaff/locker-admin
+~~~
 
+Install [ws-emit](https://github.com/yaroslaff/ws-emit):
+~~~
+pip3 install git+https://github.com/yaroslaff/ws-emit
 
-ln -s /opt/venv/locker-server/locker/systemd/locker-server.service /etc/systemd/system
+cp ws-emit/contrib/ws-emit.service /etc/systemd/system
+# edit this file and ensure it has correct path to ws-emit.py
 
+cp ws-emit/contrib/ws-emit /etc/default/
+# edit and set CORS="*"
+~~~
 
-# Cheatsheet
+Create first app (for myapps)
+~~~
+mkdir /opt/locker-apps
+chown -R www-data:www-data /opt/locker-apps/
+sudo -u www-data locker-admin create adm myapps
+~~~
 
+record MASTER KEY from output (use it as LOCKER_KEY later).
+
+Clone [locker-myapps](https://github.com/yaroslaff/locker-myapps) to local computer and create .env file with content similar to:
+~~~
+LOCKER_HOST=myapps-adm.rudev.www-security.net
+LOCKER_KEY=123abc123abc123abc...
+~~~
+
+ensure locker-admin works from client machine, make simple command like `locker-admin ls`.
+
+Deploy application from local machine to server: `locker-admin deploy`.

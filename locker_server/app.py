@@ -10,8 +10,13 @@ from flask_login import current_user
 from .datafile import DataFileInvalidFlag
 from .appflagfile import AppFlagFile
 from .exceptions import AppUnconfigured, AppNotFound, AppBadDomainName, AppRestrictions
-
 from .config import config
+from . serverinstance import ServerInstance
+
+
+
+si = ServerInstance()
+
 
 class QueryOptions:
     def __init__(self, app, data=None):
@@ -221,6 +226,7 @@ class App:
 
     def log(self, msg):
         print(f'LOG app: {self.name}: {msg}')
+        si.socketio.emit('log', msg, room=self.name)
 
     def abort(self, status, text=None):
         response = self.cross_response(text, status)
