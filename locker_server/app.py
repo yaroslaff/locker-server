@@ -12,7 +12,7 @@ from .appflagfile import AppFlagFile
 from .exceptions import AppUnconfigured, AppNotFound, AppBadDomainName, AppRestrictions
 from .config import config
 from . serverinstance import ServerInstance
-
+from .misc.vhost import vhost_manager
 
 
 si = ServerInstance()
@@ -269,3 +269,13 @@ class App:
         if self.count_users() >= self.limits.users():
             return False
         return True
+
+    def tracewrite(self, method, path):
+        print(f"{self} {method} {path}")
+        if path == 'etc/servernames.json':
+            print("update servernames")
+            vm = vhost_manager(self)
+            vm.vhost_update()
+            
+
+            

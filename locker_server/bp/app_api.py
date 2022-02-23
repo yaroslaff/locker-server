@@ -65,7 +65,6 @@ def get(path):
 @api_bp.route('/<path:path>', methods=['PUT'])
 def put(path):
 
-
     app = App()
     app.check_key()
 
@@ -80,7 +79,8 @@ def put(path):
         
         with open(filepath, "wb") as fh:
             fh.write(request.get_data())
-            return Response(f'Uploaded {path}\n')
+        app.tracewrite(method='API PUT', path=path)
+        return Response(f'Uploaded {path}\n')
 
     except (UserHomeRootViolation, UserHomePermissionViolation) as e:
         print(f'{type(e)} exception: {e}')

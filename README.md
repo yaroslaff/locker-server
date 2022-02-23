@@ -48,7 +48,7 @@ pip3 install git+https://github.com/yaroslaff/locker-server.git
 cat > /etc/default/locker-server <<EOF
 # locker env file
 LOCKER_APPS_PATH=/opt/locker-apps/
-LOCKER_LOCAL_CONFIG=/etc/locker-server.yml
+LOCKER_LOCAL_CONFIG=/etc/locker/locker-server.yml
 LOCKER_DEBUG=1
 EOF
 
@@ -58,7 +58,7 @@ cp /opt/venv/locker-server/locker/nginx/locker /etc/nginx/sites-available/
 cp /opt/venv/locker-server/locker/nginx/locker-https /etc/nginx/sites-available/
 ~~~
 
-Example locker-server.yml:
+## Example locker-server.yml
 ~~~
 VENDOR_CREDENTIALS: 
   google:
@@ -70,8 +70,18 @@ VENDOR_CREDENTIALS:
 
 # Hostname, pointing to your server
 AUTH_HOST: auth.ll.www-security.net
+TOPDOMAIN: ll.www-security.net
+
 ~~~
 
+## Sudo 
+`/etc/sudoers.d/locker`:
+~~~
+www-data ALL=(ALL) NOPASSWD: /usr/local/bin/certbot
+~~~
+
+
+## Install locker-admin and ws-emit
 Install [locker-admin](https://github.com/yaroslaff/locker-admin):
 ~~~
 pip3 install git+https://github.com/yaroslaff/locker-admin
@@ -88,6 +98,9 @@ cp ws-emit/contrib/ws-emit /etc/default/
 # edit and set CORS="*"
 ~~~
 
+
+
+## Myapps
 Create first app (for myapps)
 ~~~
 mkdir /opt/locker-apps
