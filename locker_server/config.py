@@ -4,6 +4,10 @@ import os
 import socket
 
 
+venv_path = os.getenv('LOCKER_VENV', os.getenv('VIRTUAL_ENV', '.'))
+
+print(f"{venv_path} (LOCKER_VENV: {os.getenv('LOCKER_VENV')} VIRTUAL_ENV: {os.getenv('VIRTUAL_ENV')})")
+
 # Default config
 config = {
 
@@ -16,7 +20,7 @@ config = {
     'NGINX_VHOST_PATH': '/etc/nginx/vhost/{user}-{app}.conf',
     'NGINX_VHOST_TPL_PATH': '/etc/locker/nginx-vhost-template.conf',
 
-    'MKVHOST': os.path.join(os.getenv('VIRTUAL_ENV', '.'), 'bin', 'mkvhost.py'),
+    'MKVHOST': os.path.join(venv_path, 'bin', 'mkvhost.py'),
 
     # 
     # SSL
