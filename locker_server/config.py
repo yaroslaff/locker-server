@@ -15,11 +15,14 @@ config = {
     'CERTBOT_WEBROOT': '/var/www/acme',
     'NGINX_VHOST_PATH': '/etc/nginx/vhost/{user}-{app}.conf',
     'NGINX_VHOST_TPL_PATH': '/etc/locker/nginx-vhost-template.conf',
+
+    'MKVHOST': os.path.join(os.getenv('VIRTUALENV', '.'), 'bin', 'mkvhost.py'),
+
     # 
     # SSL
     #
     # 'PRIVKEY': None,
-    # s'CERT': None,
+    # 'CERT': None,
 
 
     #

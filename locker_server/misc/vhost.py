@@ -11,6 +11,7 @@ class vhost_manager:
         self.app = app
        
         self.vhostconf = config['NGINX_VHOST_PATH'].format(user=app.username, app=app.appname)
+        self.tpl_path = config['NGINX_VHOST_TPL_PATH']
         self.mainhostname = f"{app.appname}-{app.username}.{config['TOPDOMAIN']}"
         self.servernames_path = os.path.join(config['APPS_PATH'], app.username, app.appname, 'etc/servernames.json')
         
@@ -69,6 +70,15 @@ class vhost_manager:
         subprocess.run(mkcert_cmd)
 
         # update nginx vhost conf file
+
+        mkvhost_cmd = [
+            config['MKVHOST'],
+            '--create',
+            '--template', self.tpl_path,
+            '--target', self.vhostconf,
+            '-d', ' '.join(self.servernames)
+        ]
+        subprocess.run(mkvhost_cmd)
 
     #
     # /opt/venv/certbot/bin/certbot --non-interactive delete --cert-name x1.rudev.www-security.net

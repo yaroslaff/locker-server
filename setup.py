@@ -7,7 +7,7 @@ def read(fname):
 
 
 setup(name='locker-server',
-        version='0.0.12',
+        version='0.0.13',
         description='locker OpenID Connect file server',
         url='https://github.com/yaroslaff/locker-server',
         author='Yaroslav Polyakov',
@@ -31,7 +31,9 @@ setup(name='locker-server',
         include_package_data = True,
 
 
-        scripts=['bin/locker-server.py'],
+        scripts=[
+            'bin/locker-server.py',
+            'bin/mkvhost.py'],
 
         long_description = read('README.md'),
         long_description_content_type='text/markdown',
