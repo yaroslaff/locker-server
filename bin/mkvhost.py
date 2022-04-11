@@ -40,7 +40,6 @@ def get_args():
 
 def main():
     args = get_args()
-    print(args)
 
     if args.create:
         if not args.domain:
