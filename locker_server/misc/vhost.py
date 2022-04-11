@@ -48,7 +48,7 @@ class vhost_manager:
             print("no need to update")
             return
         
-        regenerate_certificates = not str2bool(os.getenv('LOCKER_DEBUG_SKIP_CERTIFICATES'))
+        regenerate_certificates = not str2bool(os.getenv('LOCKER_DEBUG_SKIP_CERTS'))
 
         if regenerate_certificates:
             # delete old cert
@@ -71,6 +71,9 @@ class vhost_manager:
             print("make cert:", mkcert_cmd)
             
             subprocess.run(mkcert_cmd)
+        
+        else:
+            print("Skipped certificates, because LOCKER_DEBUG_SKIP_CERTS")
 
         # update nginx vhost conf file
 
