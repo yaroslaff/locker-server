@@ -47,27 +47,30 @@ class vhost_manager:
         if not self.vhost_need_update():
             print("no need to update")
             return
-
-        print("Update vhost STUB")
-
-        # delete old cert
-        print("delete old cert")
-        subprocess.run([
-            'sudo',
-            'certbot','--non-interactive','delete',
-            '--cert-name', self.mainhostname])
         
-        print("get new cert")
-        mkcert_cmd = [
-            'sudo',
-            'certbot','certonly','--allow-subset-of-names',
-            '--webroot', 
-            '-w', config['CERTBOT_WEBROOT']]
+        regenerate_certificates = False
 
-        for sn in self.servernames:
-            mkcert_cmd.extend(['-d', sn])
-        print("make cert:", mkcert_cmd)
-        subprocess.run(mkcert_cmd)
+        if regenerate_certificates:
+            # delete old cert
+            print("delete old cert")
+            subprocess.run([
+                'sudo',
+                'certbot','--non-interactive','delete',
+                '--cert-name', self.mainhostname])
+        
+            print("get new cert")
+            mkcert_cmd = [
+                'sudo',
+                'certbot','certonly','--allow-subset-of-names',
+                '--webroot', 
+                '-w', config['CERTBOT_WEBROOT']]
+
+            for sn in self.servernames:
+                mkcert_cmd.extend(['-d', sn])
+
+            print("make cert:", mkcert_cmd)
+            
+            subprocess.run(mkcert_cmd)
 
         # update nginx vhost conf file
 

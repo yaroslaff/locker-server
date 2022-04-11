@@ -17,7 +17,7 @@ config = {
     'APPS_PATH': os.getenv('LOCKER_APPS_PATH', '/opt/locker-apps/'),
     'LOCAL_CONFIG': os.getenv('LOCKER_LOCAL_CONFIG', 'config.yml'),
     'CERTBOT_WEBROOT': '/var/www/acme',
-    'NGINX_VHOST_PATH': '/etc/nginx/vhost/{user}-{app}.conf',
+    'NGINX_VHOST_PATH': '/etc/nginx/vhosts/{user}-{app}.conf',
     'NGINX_VHOST_TPL_PATH': '/etc/locker/nginx-vhost.tpl',
 
     'MKVHOST': os.path.join(venv_path, 'bin', 'mkvhost.py'),
