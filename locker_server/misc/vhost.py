@@ -2,7 +2,7 @@ import os
 import json
 import subprocess
 from ..config import config
-
+from ..myutils import str2bool
 
 class vhost_manager:
 
@@ -48,7 +48,7 @@ class vhost_manager:
             print("no need to update")
             return
         
-        regenerate_certificates = False
+        regenerate_certificates = not str2bool(os.getenv('LOCKER_DEBUG_SKIP_CERTIFICATES'))
 
         if regenerate_certificates:
             # delete old cert
