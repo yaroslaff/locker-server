@@ -83,7 +83,7 @@ class vhost_manager:
             '--create',
             '--template', self.tpl_path,
             '--target', self.vhostconf,
-            '-d', *self.servernames)
+            '-d', *self.servernames
         ]
         subprocess.run(mkvhost_cmd)
 
