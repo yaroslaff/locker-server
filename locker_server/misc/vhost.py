@@ -72,6 +72,7 @@ class vhost_manager:
         # update nginx vhost conf file
 
         mkvhost_cmd = [
+            'sudo',
             config['MKVHOST'],
             '--create',
             '--template', self.tpl_path,

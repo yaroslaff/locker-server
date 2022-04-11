@@ -48,6 +48,7 @@ pip3 install git+https://github.com/yaroslaff/locker-server.git
 cat > /etc/default/locker-server <<EOF
 # locker env file
 LOCKER_APPS_PATH=/opt/locker-apps/
+LOCKER_VENV=/opt/venv/locker-server
 LOCKER_LOCAL_CONFIG=/etc/locker/locker-server.yml
 LOCKER_DEBUG=1
 EOF
@@ -77,7 +78,7 @@ TOPDOMAIN: ll.www-security.net
 ## Sudo 
 `/etc/sudoers.d/locker`:
 ~~~
-www-data ALL=(ALL) NOPASSWD: /usr/local/bin/certbot
+www-data ALL=(ALL) NOPASSWD: /usr/local/bin/certbot, /opt/venv/locker-server/bin/mkvhost.py
 ~~~
 
 
