@@ -49,10 +49,13 @@ class vhost_manager:
             return
         
         regenerate_certificates = not str2bool(os.getenv('LOCKER_DEBUG_SKIP_CERTS'))
+        test_certificates = str2bool(os.getenv('LOCKER_DEBUG_TEST_CERTS'))
+
 
         if regenerate_certificates:
             # delete old cert
             print("delete old cert")
+            subprocess.run('id')
             subprocess.run([
                 'sudo',
                 'certbot','--non-interactive','delete',
@@ -61,9 +64,13 @@ class vhost_manager:
             print("get new cert")
             mkcert_cmd = [
                 'sudo',
-                'certbot','certonly','--allow-subset-of-names',
+                'certbot','certonly',
+                *config['LOCKER_CERTBOT_ARGS'].split(' '),
+                '--allow-subset-of-names',
                 '--webroot', 
-                '-w', config['CERTBOT_WEBROOT']]
+                '-w', config['CERTBOT_WEBROOT']  
+                + ['--test-cert' if test_certificates else [] ]
+                ]
 
             for sn in self.servernames:
                 mkcert_cmd.extend(['-d', sn])
