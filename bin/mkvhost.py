@@ -3,10 +3,11 @@
 import argparse
 import os
 import sys
+import subprocess
 
 
 
-def create(domain, tpl_path, target):
+def create(domain, tpl_path, target, reload):
     # print(domain, tpl_path, vhost_path)
     with open(tpl_path) as fh:
         template = fh.read()
@@ -18,6 +19,9 @@ def create(domain, tpl_path, target):
     with open(target, "w") as fh:
         fh.write(template)
 
+    if reload:
+        print("reload nginx...")
+        subprocess.run(['nginx', '-s', 'reload'])
 
 
 def get_args():
@@ -34,6 +38,7 @@ def get_args():
     g = parser.add_argument_group('Options')
     g.add_argument('--template', default=def_template, help=f'nginx vhost template, def: {def_template}')
     g.add_argument('--target', help=f'path to nginx config directory, def: {def_path}')
+    g.add_argument('--reload', default=False, action='store_true', help=f'reload nginx after operation')
 
 
     return parser.parse_args()    
@@ -45,7 +50,7 @@ def main():
         if not args.domain:
             print("Need hostnames (-d)")
             sys.exit(1)
-        create(args.domain, args.template, args.target)
+        create(args.domain, args.template, args.target, reload=args.reload)
 
 
 if __name__ == '__main__':

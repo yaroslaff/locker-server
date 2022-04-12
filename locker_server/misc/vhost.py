@@ -83,11 +83,10 @@ class vhost_manager:
             '--create',
             '--template', self.tpl_path,
             '--target', self.vhostconf,
+            '--reload',
             '-d', *self.servernames
         ]
         subprocess.run(mkvhost_cmd)
-
-        subprocess.run(['nginx', '-s', 'reload'])
 
     #
     # /opt/venv/certbot/bin/certbot --non-interactive delete --cert-name x1.rudev.www-security.net
