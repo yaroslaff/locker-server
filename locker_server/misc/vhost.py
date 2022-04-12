@@ -49,7 +49,7 @@ class vhost_manager:
             return
         
         regenerate_certificates = not str2bool(os.getenv('LOCKER_DEBUG_SKIP_CERTS'))
-        test_certificates = str2bool(os.getenv('LOCKER_DEBUG_TEST_CERTS'))
+        test_certificates = str2bool(os.getenv('LOCKER_DEBUG_TEST_CERT'))
 
 
         if regenerate_certificates:
