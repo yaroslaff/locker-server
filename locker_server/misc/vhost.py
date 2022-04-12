@@ -65,7 +65,6 @@ class vhost_manager:
             mkcert_cmd = [
                 'sudo',
                 'certbot','certonly',
-                *config['LOCKER_CERTBOT_ARGS'].split(' '),
                 '--allow-subset-of-names',
                 '--webroot', 
                 '-w', config['CERTBOT_WEBROOT']  
