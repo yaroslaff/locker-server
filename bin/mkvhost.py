@@ -12,7 +12,7 @@ def create(domain, tpl_path, target, reload):
     with open(tpl_path) as fh:
         template = fh.read()
     
-    template = template.replace("%host1%", domain[0]).replace('%hostnames%', ', '.join(domain))
+    template = template.replace("%host1%", domain[0]).replace('%hostnames%', ' '.join(domain))
 
     # print(template)
     # print("write to", target)
