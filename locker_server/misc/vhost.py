@@ -97,7 +97,7 @@ class vhost_manager:
                 '--allow-subset-of-names',
                 '--webroot', 
                 '-w', config['CERTBOT_WEBROOT']  
-                ] + ['--test-cert'] if test_certificates else []
+                ] + ( ['--test-cert'] if test_certificates else [] )
 
 
             for sn in self.servernames:
