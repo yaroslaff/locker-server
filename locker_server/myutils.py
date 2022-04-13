@@ -1,5 +1,22 @@
 import datetime
 import os
+import requests
+import time
+
+def myip():
+    url = 'https://ifconfig.me/'
+
+    while True:
+        try:
+            r = requests.get(url)
+        except requests.exceptions.RequestException:
+            time.sleep(1)
+            pass
+        if r.status_code == 200:
+            return r.text
+        else:
+            time.sleep(5)
+
 
 def shortdate(dt=None):
     dt = dt or datetime.datetime.now() 

@@ -2,11 +2,15 @@ import json
 import yaml
 import os
 import socket
+from myutils import myip
 
 
 venv_path = os.getenv('LOCKER_VENV', os.getenv('VIRTUAL_ENV', '.'))
 
 print(f"{venv_path} (LOCKER_VENV: {os.getenv('LOCKER_VENV')} VIRTUAL_ENV: {os.getenv('VIRTUAL_ENV')})")
+
+def env2list(varname, default="", sep=' '):
+    return list(filter(None, list(os.getenv(varname, default).split(sep))))
 
 # Default config
 config = {
@@ -21,6 +25,9 @@ config = {
     'NGINX_VHOST_TPL_PATH': '/etc/locker/nginx-vhost.tpl',
 
     'MKVHOST': os.path.join(venv_path, 'bin', 'mkvhost.py'),
+
+    'MYIPS': env2list('LOCKER_MYIPS'),
+    'RESERVED_DOMAIN_SUFFIXES': env2list('LOCKER_RESERVED_DOMAIN_SUFFIXES'),
 
     # 
     # SSL
@@ -75,5 +82,9 @@ if config['APPS_PATH']:
 pubconf = config['PUBCONF']
 if not pubconf.get('hostname'):
     pubconf['hostname'] = socket.gethostname()
+
+if not config['MYIPS']:
+    config['MYIPS'] = [ myip() ]
+    print(f"Autodetect MYIPS: {config['MYIPS']}")
 
 

@@ -1,6 +1,8 @@
 import os
 import json
 import subprocess
+import socket
+
 from ..config import config
 from ..myutils import str2bool
 
@@ -14,7 +16,9 @@ class vhost_manager:
         self.tpl_path = config['NGINX_VHOST_TPL_PATH']
         self.mainhostname = f"{app.appname}-{app.username}.{config['TOPDOMAIN']}"
         self.servernames_path = os.path.join(config['APPS_PATH'], app.username, app.appname, 'etc/servernames.json')
-        
+        self.myips = config['MYIPS']
+        self.suffixes = config['RESERVED_DOMAIN_SUFFIXES']
+        self.servernames = list()
 
     def read_servernames(self):
         # read servernames and fix it
@@ -43,9 +47,35 @@ class vhost_manager:
         
         return False
 
+
+    def verify_hosts(self):
+        myips = set(self.myips)
+
+        try:
+            for host in self.servernames:
+                if any([ host.endswith(s) for s in self.suffixes ]):
+                    print(f"Suffix verification fails for {host}")
+                    return False
+
+            for host in self.servernames:
+                ips = set(socket.gethostbyname_ex(host)[2])
+                if not ips.issubset(self.myips):
+                    print(f"host: {host} IPs: {ips} not inside {self.myips}")
+                    return False
+            return True
+
+        except socket.gaierror as e:
+            print(f"resolve error for {hosts}: {e}")
+            return False
+
+
     def vhost_update(self):
         if not self.vhost_need_update():
             print("no need to update")
+            return
+
+        if not self.verify_hosts():
+            print("failed verification")
             return
         
         regenerate_certificates = not str2bool(os.getenv('LOCKER_DEBUG_SKIP_CERTS'))
@@ -55,7 +85,6 @@ class vhost_manager:
         if regenerate_certificates:
             # delete old cert
             print("delete old cert")
-            subprocess.run('id')
             subprocess.run([
                 'sudo',
                 'certbot','--non-interactive','delete',
