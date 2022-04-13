@@ -2,7 +2,7 @@ import json
 import yaml
 import os
 import socket
-from myutils import myip
+from .myutils import myip
 
 
 venv_path = os.getenv('LOCKER_VENV', os.getenv('VIRTUAL_ENV', '.'))
