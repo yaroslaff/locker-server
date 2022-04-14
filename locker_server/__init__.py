@@ -124,6 +124,10 @@ def pubconf():
 def diag():
     secure = False
 
+    log.debug("diag debug")
+    log.info("diag info")
+
+
     results = {
         'checks': list(),
         'info': dict(),
