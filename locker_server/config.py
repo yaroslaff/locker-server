@@ -18,8 +18,13 @@ config = {
     #
     # Main config
     #
-    'APPS_PATH': os.getenv('LOCKER_APPS_PATH', '/opt/locker-apps/'),
-    'LOCAL_CONFIG': os.getenv('LOCKER_LOCAL_CONFIG', 'config.yml'),
+#    'APPS_PATH': os.getenv('LOCKER_APPS_PATH', '/opt/locker/apps/'),
+    'LOCKER_PATH': os.getenv('LOCKER_PATH', '/opt/locker/'),
+    'APPS_PATH': os.getenv('LOCKER_APPS_PATH'),
+    'LOCAL_CONFIG': os.getenv('LOCKER_LOCAL_CONFIG'),
+    'VHOST_MAP': os.getenv('LOCKER_VHOST_MAP'),
+
+
     'CERTBOT_WEBROOT': '/var/www/acme',
     'NGINX_VHOST_PATH': '/etc/nginx/vhosts/{user}-{app}.conf',
     'NGINX_VHOST_TPL_PATH': '/etc/locker/nginx-vhost.tpl',
@@ -68,6 +73,10 @@ config = {
     }
 }
 
+
+if not config['LOCAL_CONFIG']:
+    config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'etc', 'config.yml')
+
 # update config
 for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
     print("Load local config from file:", path)
@@ -76,8 +85,11 @@ for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
         config.update(cfg)
 
 # fix config
-if config['APPS_PATH']:
-    config['APPS_PATH'] = os.path.expanduser(config['APPS_PATH'])
+if not config['APPS_PATH']:
+    config['APPS_PATH'] = os.path.join(config['LOCKER_PATH'], 'apps')
+
+if not config['VHOST_MAP']:
+    config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'var', 'vhostmap.json')
 
 pubconf = config['PUBCONF']
 if not pubconf.get('hostname'):
