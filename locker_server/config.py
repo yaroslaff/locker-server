@@ -75,7 +75,7 @@ config = {
 
 
 if not config['LOCAL_CONFIG']:
-    config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'etc', 'config.yml')
+    config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'etc', 'locker-server.yml')
 
 
 print("local config:", config['LOCAL_CONFIG'])
