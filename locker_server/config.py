@@ -77,6 +77,9 @@ config = {
 if not config['LOCAL_CONFIG']:
     config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'etc', 'config.yml')
 
+
+print("local config:", config['LOCAL_CONFIG'])
+
 # update config
 for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
     print("Load local config from file:", path)
