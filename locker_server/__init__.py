@@ -124,9 +124,7 @@ def pubconf():
 def diag():
     secure = False
 
-    log.debug("diag debug")
-    log.info("diag info")
-
+    log.debug(f"diag debug {os.getpid()}")
 
     results = {
         'checks': list(),
