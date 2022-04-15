@@ -12,7 +12,7 @@ from .datafile import DataFileInvalidFlag
 from .appflagfile import AppFlagFile
 from .exceptions import AppUnconfigured, AppNotFound, AppBadDomainName, AppRestrictions
 from .config import config
-from . serverinstance import ServerInstance
+from .serverinstance import ServerInstance
 from .misc.vhost import vhost_manager
 
 
@@ -115,12 +115,10 @@ class App:
         mastername = si.redis.hget('locker:apphostnames', url)
         log.debug(f"mastername: {mastername}")
 
-        leftpart = url.split('.')[0]
-
         try:
-            self.appname, self.username = leftpart.rsplit('-', 1)
+            self.username, self.appname = mastername.split(':')
         except ValueError:
-            raise AppBadDomainName(f'Bad app domain name {leftpart}')
+            raise AppBadDomainName(f'Bad app domain name {mastername}')
 
 
         assert('/' not in self.appname)
