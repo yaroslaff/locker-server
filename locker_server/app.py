@@ -142,6 +142,12 @@ class App:
         self.loaded_configs=dict()
         self.limits = AppLimits(self)
 
+    def tuplename(self):
+        return (self.username, self.appname)
+    
+    def hostname(self):
+        return f"{self.appname}-{self.username}"
+
     @classmethod
     def set_config(cls, config):
         cls.apps_path = config['APPS_PATH']
@@ -277,7 +283,7 @@ class App:
         return True
 
     def tracewrite(self, method, path):
-        print(f"{self} {method} {path}")
+        # print(f"{self} {method} {path}")
         if path == 'etc/servernames.json':
             print("update servernames")
             vm = vhost_manager(self)

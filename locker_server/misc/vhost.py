@@ -6,6 +6,10 @@ import socket
 from ..config import config
 from ..myutils import str2bool
 
+from ..serverinstance import ServerInstance
+
+si = ServerInstance()
+
 class vhost_manager:
 
 
@@ -65,7 +69,7 @@ class vhost_manager:
             return True
 
         except socket.gaierror as e:
-            print(f"resolve error for {hosts}: {e}")
+            print(f"resolve error for {self.servernames}: {e}")
             return False
 
 
@@ -122,6 +126,29 @@ class vhost_manager:
             '-d', *self.servernames
         ]
         subprocess.run(mkvhost_cmd)
+        self.update_mappings()
+
+    def update_mappings(self):
+
+        # update vhost_map first
+        with open(config['VHOST_MAP']) as fh:
+            vhost_map = json.load(fh)
+
+        key = ':'.join(self.app.tuplename())
+
+        for old_sn in vhost_map[key]:
+            if old_sn not in self.servernames:
+                si.redis.hdel('locker:apphostnames', old_sn)
+
+        for sn in self.servernames:
+            if not sn in vhost_map[key]:
+                si.redis.hset('locker:apphostnames', sn, ':'.join(self.tuplename()))
+
+        map[key] = self.servernames
+        
+        with open(config['VHOST_MAP'], "w") as fh:
+            json.write(vhost_map, fh, indent=4, sort_keys=True)
+
 
     #
     # /opt/venv/certbot/bin/certbot --non-interactive delete --cert-name x1.rudev.www-security.net
