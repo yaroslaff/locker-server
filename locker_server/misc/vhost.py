@@ -160,7 +160,7 @@ class vhost_manager:
         vhost_map[key] = self.servernames
         
         with open(config['VHOST_MAP'], "w") as fh:
-            json.write(vhost_map, fh, indent=4, sort_keys=True)
+            json.dump(vhost_map, fh, indent=4, sort_keys=True)
 
 
     #
