@@ -23,7 +23,6 @@ def loadvhostmap():
     vhostmap_path = os.path.join(locker_path, 'var', 'vhostmap.json')
     with open(vhostmap_path) as fh:
         vhmap = json.load(fh)
-    print(json.dumps(vhmap, indent=4))
     r.delete('locker:apphostnames')
 
     for app, hostlist in vhmap.items():
@@ -36,7 +35,6 @@ def main():
     global locker_path
 
     args = get_args()
-    print(args)
     locker_path = args.locker
 
     if args.load_vhostmap:
