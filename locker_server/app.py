@@ -3,6 +3,7 @@ import json
 from os.path import abspath
 import re
 import datetime
+import logging
 
 from flask import abort, request, Response, current_app
 from flask_login import current_user
@@ -16,7 +17,7 @@ from .misc.vhost import vhost_manager
 
 
 si = ServerInstance()
-
+log = logging.getLogger()
 
 class QueryOptions:
     def __init__(self, app, data=None):
@@ -108,6 +109,8 @@ class App:
             abort(500, 'App.apps_path not configured')
 
         url = url or request.host
+
+        log.debug(f"Search app for host: {url}")
 
         leftpart = url.split('.')[0]
 
