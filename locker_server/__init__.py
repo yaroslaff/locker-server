@@ -144,7 +144,8 @@ def diag():
             return jsonify(results)
 
         # app exists or exception handled
-        results['info']['name'] = app.tuplename()
+        results['info']['user'] = app.username
+        results['info']['app'] = app.appname
 
         print("diag app:", app)
         app.log("test log message from /diag")
