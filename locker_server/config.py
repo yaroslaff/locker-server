@@ -90,7 +90,7 @@ if not config['APPS_PATH']:
     config['APPS_PATH'] = os.path.join(config['LOCKER_PATH'], 'apps')
 
 if not config['VHOST_MAP']:
-    config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'var', 'vhostmap.json')
+    config['VHOST_MAP'] = os.path.join(config['LOCKER_PATH'], 'var', 'vhostmap.json')
 
 if not config['NGINX_VHOST_TPL_PATH']:
     config['NGINX_VHOST_TPL_PATH'] = os.path.join(config['LOCKER_PATH'], 'etc', 'nginx-vhost.tpl')
