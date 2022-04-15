@@ -27,7 +27,7 @@ config = {
 
     'CERTBOT_WEBROOT': '/var/www/acme',
     'NGINX_VHOST_PATH': '/etc/nginx/vhosts/{user}-{app}.conf',
-    'NGINX_VHOST_TPL_PATH': '/etc/locker/nginx-vhost.tpl',
+    'NGINX_VHOST_TPL_PATH': None,
 
     'MKVHOST': os.path.join(venv_path, 'bin', 'mkvhost.py'),
 
@@ -78,8 +78,6 @@ if not config['LOCAL_CONFIG']:
     config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'etc', 'locker-server.yml')
 
 
-print("local config:", config['LOCAL_CONFIG'])
-
 # update config
 for path in [c for c in config['LOCAL_CONFIG'].split(' ') if os.path.exists(c)]:
     print("Load local config from file:", path)
@@ -93,6 +91,9 @@ if not config['APPS_PATH']:
 
 if not config['VHOST_MAP']:
     config['LOCAL_CONFIG'] = os.path.join(config['LOCKER_PATH'], 'var', 'vhostmap.json')
+
+if not config['NGINX_VHOST_TPL_PATH']:
+    config['NGINX_VHOST_TPL_PATH'] = os.path.join(config['LOCKER_PATH'], 'etc', 'nginx-vhost.tpl')
 
 pubconf = config['PUBCONF']
 if not pubconf.get('hostname'):
