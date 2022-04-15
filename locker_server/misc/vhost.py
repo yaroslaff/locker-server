@@ -136,8 +136,12 @@ class vhost_manager:
         log.debug(f"vhost_map: {config['VHOST_MAP']}")
 
         # update vhost_map first
-        with open(config['VHOST_MAP']) as fh:
-            vhost_map = json.load(fh)
+        try:
+            with open(config['VHOST_MAP']) as fh:
+                vhost_map = json.load(fh)
+        except FileNotFoundError:
+            log.warn(f'Not found {config["VHOST_MAP"]}, use empty file')
+            vhost_map = dict()
 
         key = ':'.join(self.app.tuplename())
 
