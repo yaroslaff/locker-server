@@ -123,8 +123,6 @@ def pubconf():
 # @login_required
 def diag():
     secure = False
-
-    si.counter += 1
     
     results = {
         'checks': list(),
