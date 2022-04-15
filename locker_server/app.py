@@ -112,7 +112,7 @@ class App:
 
         log.debug(f"Search app for host: {url}")
 
-        mastername = si.redis.hget('locker:apphostnames', 'url')
+        mastername = si.redis.hget('locker:apphostnames', url)
         log.debug(f"mastername: {mastername}")
 
         leftpart = url.split('.')[0]
