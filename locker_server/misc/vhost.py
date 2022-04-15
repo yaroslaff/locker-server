@@ -2,6 +2,7 @@ import os
 import json
 import subprocess
 import socket
+import logging
 
 from ..config import config
 from ..myutils import str2bool
@@ -9,6 +10,7 @@ from ..myutils import str2bool
 from ..serverinstance import ServerInstance
 
 si = ServerInstance()
+log = logging.getLogger()
 
 class vhost_manager:
 
@@ -88,13 +90,13 @@ class vhost_manager:
 
         if regenerate_certificates:
             # delete old cert
-            print("delete old cert")
+            log.debug("delete old cert")
             subprocess.run([
                 'sudo',
                 'certbot','--non-interactive','delete',
                 '--cert-name', self.mainhostname])
         
-            print("get new cert")
+            log.debug("get new cert")
             mkcert_cmd = [
                 'sudo',
                 'certbot','certonly',
@@ -107,7 +109,7 @@ class vhost_manager:
             for sn in self.servernames:
                 mkcert_cmd.extend(['-d', sn])
 
-            print("make cert:", mkcert_cmd)
+            log.debug(f"make cert: {mkcert_cmd}")
             
             subprocess.run(mkcert_cmd)
         
@@ -129,6 +131,9 @@ class vhost_manager:
         self.update_mappings()
 
     def update_mappings(self):
+
+        log.debug("update mappings")
+        log.debug(f"vhost_map: {config['VHOST_MAP']}")
 
         # update vhost_map first
         with open(config['VHOST_MAP']) as fh:
