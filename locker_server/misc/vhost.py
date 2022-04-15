@@ -154,7 +154,7 @@ class vhost_manager:
 
         for sn in self.servernames:
             if (not key in vhost_map) or (not sn in vhost_map[key]):
-                si.redis.hset('locker:apphostnames', sn, ':'.join(self.tuplename()))
+                si.redis.hset('locker:apphostnames', sn, ':'.join(self.app.tuplename()))
 
 
         map[key] = self.servernames
