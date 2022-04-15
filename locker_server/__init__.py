@@ -124,7 +124,6 @@ def pubconf():
 def diag():
     secure = False
 
-    log.debug(f"diag debug {os.getpid()} c: {si.counter}")
     si.counter += 1
     
     results = {
