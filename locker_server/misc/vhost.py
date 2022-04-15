@@ -157,7 +157,7 @@ class vhost_manager:
                 si.redis.hset('locker:apphostnames', sn, ':'.join(self.app.tuplename()))
 
 
-        map[key] = self.servernames
+        vhost_map[key] = self.servernames
         
         with open(config['VHOST_MAP'], "w") as fh:
             json.write(vhost_map, fh, indent=4, sort_keys=True)
