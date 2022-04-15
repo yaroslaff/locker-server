@@ -11,4 +11,6 @@ class ServerInstance(metaclass=Singleton):
     def __init__(self):
         self.redis = None
         self.config = None
+        self.counter = 0
+        
         
