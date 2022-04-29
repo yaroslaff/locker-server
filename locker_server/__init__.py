@@ -147,6 +147,10 @@ def diag():
         results['info']['user'] = app.username
         results['info']['app'] = app.appname
 
+        results['info']['authenticated'] = current_user.is_authenticated
+        results['info']['current_user'] = str(current_user)
+
+
         print("diag app:", app)
         app.log("test log message from /diag")
 
