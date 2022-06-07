@@ -19,6 +19,10 @@ class AppFlagFile(FlagFile):
             for key, opts in options['flag-options'].items():
                 if self.path == self.app.localpath("var/" + key):
                     if 'notify' in opts:
+
+                        self.app.log(f"Notify: {opts['notify']}")
+                        self.app.log(f"opts: {opts}")
+
                         if opts['notify'] == 'http':
                             print("notify via", opts['URL'])
                             req = {
