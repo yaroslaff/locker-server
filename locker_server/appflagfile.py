@@ -34,7 +34,7 @@ class AppFlagFile(FlagFile):
                             si.redis.sadd('http_requests_queue', json.dumps(req))
                         elif opts['notify'] == 'redis:publish':                            
                             channel = opts.get('channel', 'sleep')
-                            data = self.app.name
+                            data = opts.get('data', self.app.name)
                             si.redis.publish(channel, data)
 
                         elif opts['notify'] == 'socketio':
