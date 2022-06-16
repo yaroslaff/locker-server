@@ -113,12 +113,21 @@ class App:
         log.debug(f"Search app for host: {url}")
 
         mastername = si.redis.hget('locker:apphostnames', url)
-        log.debug(f"mastername: {mastername}")
+        if mastername:
+            log.debug(f"mastername: {mastername}")
 
-        try:
-            self.username, self.appname = mastername.split(':')
-        except ValueError:
-            raise AppBadDomainName(f'Bad app domain name {mastername}')
+            try:
+                self.username, self.appname = mastername.split(':')
+            except ValueError:
+                raise AppBadDomainName(f'Bad app domain name {mastername}')                
+        else:
+            # no mastername, this is not an alias
+            # Note: opposite order!
+            try:
+                # appname-username.a.b.c.com
+                self.appname, self.username = url.split('.')[0].split('-')
+            except ValueError:
+                raise AppBadDomainName(f'Unknown domain name and cannot parse {url}')
 
 
         assert('/' not in self.appname)
