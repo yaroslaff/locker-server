@@ -26,6 +26,9 @@ But if your application has no other special API (only public data + customer da
 - Shops (real full-features shops, with customer area, order history etc.)
 - Even social applications (like reddit)!
 
+# Documentation
+This is brief readme, [full documentation](https://locker-doc.readthedocs.io/en/latest/) ([locker-doc git repo](https://github.com/yaroslaff/locker-doc)).
+
 # Quickstart
 
 ~~~
