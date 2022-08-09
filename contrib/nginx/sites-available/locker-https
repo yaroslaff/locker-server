@@ -1,0 +1,29 @@
+server {
+
+    listen 80;
+    server_name rudev.www-security.net, *.rudev.www-security.net;
+
+    error_log  /var/log/nginx/locker-error.log;
+    access_log /var/log/nginx/locker-access.log;
+    
+    #location / {
+    #    include uwsgi_params;
+    #    uwsgi_pass unix:/run/locker-server/locker.sock;
+    #}
+
+    location ^~ /.well-known/acme-challenge/ {
+      alias /var/www/acme/.well-known/acme-challenge/;
+    }   
+}
+
+server {
+	server_name rudev.www-security.net *.rudev.www-security.net;
+    	ssl_certificate /etc/letsencrypt/live/rudev.www-security.net/fullchain.pem; # managed by Certbot
+    	ssl_certificate_key /etc/letsencrypt/live/rudev.www-security.net/privkey.pem; # managed by Certbot
+
+	include	include.d/locker.conf;
+}
+
+# include vhosts. vhosts are needed for each virthost to be in customer domain
+include vhosts/*.conf;
+
