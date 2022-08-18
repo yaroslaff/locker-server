@@ -222,20 +222,20 @@ def get_bindings():
 def authenticated():
 
     reply = {'status': False, 'messages': []}
+    origin = None
 
     try:
-
-        try:
-            app = App(request.host)
-        except AppNotFound:
-            reply['messages'].append(f'Not found app {request.host}')
-            raise Exception
 
         try:
             origin = request.headers['Origin']
         except KeyError:
             reply['messages'].append(f'Request missing Origin header')
-            origin = None
+
+        try:
+            app = App(request.host)
+        except AppNotFound:            
+            reply['messages'].append(f'Not found app {request.host}')
+            raise Exception
 
         # app.check_origin()
         if not app.allowed_origin(origin):
