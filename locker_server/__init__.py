@@ -143,6 +143,9 @@ def diag():
             results['errors'].append('App bad domain name')
             return jsonify(results)
 
+        log.debug(f"diag for app {app}")
+        app.log("diag...")
+
         # app exists or exception handled
         results['info']['user'] = app.username
         results['info']['app'] = app.appname
