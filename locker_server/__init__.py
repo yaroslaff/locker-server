@@ -256,16 +256,21 @@ def authenticated():
         origin_domain = '.'.join(m.group('host').split('.')[-2:])
         target_domain = '.'.join(request.host.split('.')[-2:])
 
-        if origin_domain != target_domain:
-            reply['messages'].append(f'WARNING! {origin_domain=} not matches {target_domain=}')
-
-        if m.group('scheme')=='http':
-            reply['messages'].append(f'WARNING! scheme is {m.group("scheme")}')
 
         try:
             app = App(request.host)
             log.debug(f"APP: {app}")
             app.log(f"Authenticated host: {request.host} sid: {session.sid}")
+
+            if origin_domain != target_domain:
+                msg = f'WARNING! {origin_domain=} not matches {target_domain=}'
+                reply['messages'].append(msg)
+                app.log(msg)
+
+            if m.group('scheme')=='http':
+                msg = f'WARNING! scheme is {m.group("scheme")}'
+                reply['messages'].append(msg)
+                app.log(msg)
 
         except AppNotFound:            
             reply['messages'].append(f'Not found app {request.host}')
