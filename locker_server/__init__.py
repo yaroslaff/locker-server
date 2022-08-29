@@ -242,7 +242,6 @@ def authenticated():
     reply = {'status': False, 'messages': []}
     origin = None
 
-
     try:
 
         try:
@@ -254,6 +253,7 @@ def authenticated():
             app = App(request.host)
             log.debug(f"APP: {app}")
             app.log(f"Authenticated host: {request.host} sid: {session.sid}")
+            app.log(f"{request.headers}")
 
         except AppNotFound:            
             reply['messages'].append(f'Not found app {request.host}')
