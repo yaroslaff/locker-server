@@ -15,6 +15,7 @@ import traceback
 from urllib.parse import urlparse
 from logging.handlers import SMTPHandler
 import redis
+import re
 
 from flask import Flask, make_response, redirect, request, url_for, abort, Response, session, jsonify
 from flask_session import Session
@@ -249,11 +250,16 @@ def authenticated():
         except KeyError:
             reply['messages'].append(f'Request missing Origin header')
 
+
+        m = re.match('(?P<scheme>[^:])://(?P<host>[%:]+)', origin)
+        reply['messages'].append(f"origin scheme: {m.group('scheme')}")
+        reply['messages'].append(f"origin host: {m.group('host')}")
+        reply['messages'].append(f"host: {request.host}")
+
         try:
             app = App(request.host)
             log.debug(f"APP: {app}")
             app.log(f"Authenticated host: {request.host} sid: {session.sid}")
-            app.log(f"{request.headers}")
 
         except AppNotFound:            
             reply['messages'].append(f'Not found app {request.host}')
