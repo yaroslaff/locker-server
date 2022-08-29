@@ -148,6 +148,7 @@ class App:
             raise AppNotFound(f'App {self.name!r} not found', status=404)
         self.loaded_configs=dict()
         self.limits = AppLimits(self)
+        log.debug("app constructor OK")
 
     def tuplename(self):
         return (self.username, self.appname)
