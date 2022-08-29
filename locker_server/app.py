@@ -110,8 +110,6 @@ class App:
 
         url = url or request.host
 
-        log.debug(f"Search app for host: {url}")
-
         mastername = si.redis.hget('locker:apphostnames', url)
         if mastername:
             log.debug(f"mastername: {mastername}")
@@ -148,7 +146,6 @@ class App:
             raise AppNotFound(f'App {self.name!r} not found', status=404)
         self.loaded_configs=dict()
         self.limits = AppLimits(self)
-        log.debug("app constructor OK")
 
     def tuplename(self):
         return (self.username, self.appname)

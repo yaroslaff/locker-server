@@ -121,6 +121,8 @@ def callback():
     app = App()
 
     app.log("OIDC callback")
+    app.log(f"{dir(session)}")
+    app.log(f"{session['uid']}")
 
     if 'Origin' in request.headers:
         app.cross_response('Must have empty Origin headers in callback!', 400)
