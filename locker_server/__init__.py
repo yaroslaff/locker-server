@@ -201,9 +201,9 @@ def diag():
             traceback.print_exc()
         results['errors'].append(str(e))
 
-    resp = make_response(json.dumps(results, indent=4), mimetype='application/json')
+    resp = make_response(json.dumps(results, indent=4))
+    resp.mimetype = 'application/json'
     resp.set_cookie('counter', value=str(counter+1), domain=request.host)
-    resp.set_cookie('aaa', 'bbb')
     return resp
 
 
