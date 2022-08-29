@@ -255,6 +255,7 @@ def authenticated():
         reply['messages'].append(f"origin scheme: {m.group('scheme')}")
         reply['messages'].append(f"origin host: {m.group('host')}")
         reply['messages'].append(f"host: {request.host}")
+        print(reply['messages'])
 
         try:
             app = App(request.host)
