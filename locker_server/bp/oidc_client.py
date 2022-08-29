@@ -47,6 +47,7 @@ def login(provider):
     app = App()
     app.check_origin()    
 
+    app.log(f"login sid: {session.sid}")
 
     credentials = app.get_credentials(provider)
     client = WebApplicationClient(credentials['CLIENT_ID'])
@@ -124,6 +125,8 @@ def callback():
     app.log(f"{dir(session)}")
     app.log(f"keys: {session.keys()}")
     app.log(f"sid: {session.sid}")
+    app.log(f"_id: {session['_id']}")
+    app.log(f"_user_id: {session['_user_id']}")
 
     if 'Origin' in request.headers:
         app.cross_response('Must have empty Origin headers in callback!', 400)
