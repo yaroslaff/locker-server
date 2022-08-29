@@ -251,11 +251,13 @@ def authenticated():
             reply['messages'].append(f'Request missing Origin header')
 
 
-        m = re.match('(?P<scheme>[^:])://(?P<host>[%:]+)', origin)
+        m = re.match('(?P<scheme>[^:]+)://(?P<host>[^:]+)', origin)
         reply['messages'].append(f"origin scheme: {m.group('scheme')}")
         reply['messages'].append(f"origin host: {m.group('host')}")
         reply['messages'].append(f"host: {request.host}")
-        print(reply['messages'])
+        print("zzz")
+        log.debug(reply['messages'])
+        app.log(reply['messages'])
 
         try:
             app = App(request.host)
