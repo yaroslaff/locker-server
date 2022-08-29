@@ -132,8 +132,6 @@ def diag():
 
     results['info']['pwd'] = os.getcwd()
 
-    log.debug("DIAG....")
-
     try:
 
         try:
@@ -144,9 +142,6 @@ def diag():
         except AppBadDomainName as e:
             results['errors'].append('App bad domain name')
             return jsonify(results)
-
-        log.debug(f"diag for app {app}")
-        app.log("diag...")
 
         # app exists or exception handled
         results['info']['user'] = app.username
@@ -226,6 +221,8 @@ def get_bindings():
 # @login_required
 def authenticated():
 
+    log.debug("ZZZ AUTHENTICATED")
+
     reply = {'status': False, 'messages': []}
     origin = None
 
@@ -238,6 +235,8 @@ def authenticated():
 
         try:
             app = App(request.host)
+            log.debug(f"APP: {app}")
+            app.log("Authenticated....")
         except AppNotFound:            
             reply['messages'].append(f'Not found app {request.host}')
             raise Exception
