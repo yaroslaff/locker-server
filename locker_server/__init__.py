@@ -2,6 +2,7 @@
 
 # Python standard libraries
 import json
+import mimetypes
 import os
 import sys
 import argparse
@@ -119,6 +120,11 @@ def pubconf():
 
     return response
 
+@flask_app.route('/sid')
+# @login_required
+def sid():
+    return session.sid
+
 @flask_app.route('/diag')
 # @login_required
 def diag():
@@ -132,7 +138,7 @@ def diag():
 
     counter = int(request.cookies.get('counter','0'))
     results['info']['counter'] = counter
-
+    results['info']['sid'] = session.sid
     results['info']['pwd'] = os.getcwd()
 
     try:
@@ -195,7 +201,7 @@ def diag():
             traceback.print_exc()
         results['errors'].append(str(e))
 
-    resp = make_response(json.dumps(results, indent=4))
+    resp = make_response(json.dumps(results, indent=4), mimetype='application/json')
     resp.set_cookie('counter', value=str(counter+1), domain=request.host)
     resp.set_cookie('aaa', 'bbb')
     return resp
