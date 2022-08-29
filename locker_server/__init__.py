@@ -255,6 +255,20 @@ def authenticated():
         reply['messages'].append(f"origin scheme: {m.group('scheme')}")
         reply['messages'].append(f"origin host: {m.group('host')}")
         reply['messages'].append(f"host: {request.host}")
+
+        origin_domain = '.'.join(m.group('host').split('.')[-2:])
+        target_domain = '.'.join(request.host.split('.')[-2:])
+        reply['messages'].append(f'{origin_domain=}')
+        reply['messages'].append(f'{target_domain=}')
+
+        if origin_domain != target_domain:
+            reply['messages'].append(f'WARNING! {origin_domain=} not matches {target_domain=}')
+
+        if m.group('scheme')=='http':
+            reply['messages'].append(f'WARNING! scheme is {m.group("scheme")}')
+
+        
+
         print("zzz")
         log.debug(reply['messages'])
         app.log(reply['messages'])
