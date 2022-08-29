@@ -120,6 +120,8 @@ def callback():
     r.delete(key)
     app = App()
 
+    app.log("OIDC callback")
+
     if 'Origin' in request.headers:
         app.cross_response('Must have empty Origin headers in callback!', 400)
 
@@ -162,17 +164,20 @@ def callback():
     # The user authenticated with Google, authorized your
     # app, and now you've verified their email through Google!
 
-    userinfo = userinfo_response.json()
-    sub = userinfo['sub']
+    userinfo = userinfo_response.json`()
+    sub = userinfo['sub`'`]
 
-    if not userinfo["email_verified"]:
-        return f"User email not available or not verified by {provider}.", 400
+    if not userinfo["email_verified"`]:
+        msg = f"User email not available or not verified by {provider}."
+        app.log(msg)
+        return msg, 400
 
-    # Create a user in your db with the information provided
+    # Create a user in your db with the information provid`ed
     # by Google
 
     with BindingsFile(app.localpath('etc/users.json')) as uf:
         username = uf.get_binding(provider, sub)
+        app.log(f"username: {username}")
 
     if username:
         if not current_user.is_authenticated:
@@ -181,10 +186,13 @@ def callback():
             login_user(user)
             session['userinfo'] = userinfo
             session.permanent = True
+            app.log(f"login user: {username}")
     else:
         """ no such binding """
+        app.log("no binding")
         # Maybe no need to create?
         if not app.accept_new_users():
+            app.log("not accepting new users")
             try:
                 redirect_url = app_opts['noregister_url']
                 return redirect(redirect_url)
@@ -192,16 +200,20 @@ def callback():
                 return 'New user registration is forbidden'
 
         if current_user.is_authenticated:
+            app.log("already authenticated, want bind?")
             # make new binding
             if session.get('want_bind') == provider:
                 with BindingsFile(app.localpath('etc/users.json'), 'rw') as uf:
+                    app.log(f"bind to {provider}")
                     uf.bind(provider, sub, current_user.id)
                 del session['want_bind']
 
         else:
+            app.log("create user")
             # create user
             with BindingsFile(app.localpath('etc/users.json'), 'rw') as uf:
                 username = uf.create(provider, sub)
+                app.log(f"created user {username}")
 
             user = User(
                     id_ = username, 
@@ -212,5 +224,6 @@ def callback():
             login_user(user)
             session['userinfo'] = userinfo
             session.permanent = True
+            app.log(f"Logged in new user {username}")
 
     return redirect(session['oidc_return'] or app_opts['return_url'])

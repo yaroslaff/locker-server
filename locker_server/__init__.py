@@ -221,8 +221,6 @@ def get_bindings():
 # @login_required
 def authenticated():
 
-    log.debug("ZZZ AUTHENTICATED")
-
     reply = {'status': False, 'messages': []}
     origin = None
 
