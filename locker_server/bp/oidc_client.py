@@ -121,7 +121,7 @@ def callback():
     r.delete(key)
     app = App()
 
-    app.log("OIDC callback host: {request.host} sid: {session.sid}")
+    app.log(f"OIDC callback host: {request.host} sid: {session.sid}")
 
     if 'Origin' in request.headers:
         app.cross_response('Must have empty Origin headers in callback!', 400)
@@ -179,6 +179,8 @@ def callback():
     with BindingsFile(app.localpath('etc/users.json')) as uf:
         username = uf.get_binding(provider, sub)
         app.log(f"username: {username}")
+
+    app.log(f"Authenticated? {current_user.is_authenticated}")
 
     if username:
         if not current_user.is_authenticated:
