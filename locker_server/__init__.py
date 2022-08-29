@@ -236,15 +236,18 @@ def authenticated():
         try:
             app = App(request.host)
             log.debug(f"APP: {app}")
-            app.log("Authenticated....")
+            app.log("Authenticated called")
         except AppNotFound:            
             reply['messages'].append(f'Not found app {request.host}')
             raise Exception
 
         # app.check_origin()
         if not app.allowed_origin(origin):
+            app.log(f'Origin {origin} is incorrect')
             reply['messages'].append(f'Origin {origin} is incorrect')
             raise Exception
+
+        app.log(f"Status: {current_user.is_authenticated}")
 
         reply['status'] = current_user.is_authenticated
         
