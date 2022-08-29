@@ -197,7 +197,7 @@ def diag():
 
     resp = make_response(json.dumps(results, indent=4))
     resp.set_cookie('counter', str(counter+1))
-
+    resp.set_cookie('aaa', 'bbb')
     return resp
 
 
