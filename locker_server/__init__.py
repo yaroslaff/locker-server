@@ -131,7 +131,6 @@ def diag():
     }
 
     counter = int(request.cookies.get('counter','0'))
-    app.log(f"counter: {counter}")
     results['info']['counter'] = counter
 
     results['info']['pwd'] = os.getcwd()
