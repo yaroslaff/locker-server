@@ -130,6 +130,9 @@ def diag():
         'errors': list()
     }
 
+    counter = int(request.cookies.get('counter','0'))
+    results['info']['counter'] = counter
+
     results['info']['pwd'] = os.getcwd()
 
     try:
@@ -191,6 +194,9 @@ def diag():
             print(type(e), e)
             traceback.print_exc()
         results['errors'].append(str(e))
+
+    resp = make_response(json.dumps(results, indent=4))
+    resp.set_cookie('counter', counter+1)
 
     return jsonify(results)
 
