@@ -123,7 +123,17 @@ def pubconf():
 @flask_app.route('/sid')
 # @login_required
 def sid():
-    return session.sid
+    try:
+        origin = request.headers['Origin']
+    except KeyError:
+        origin = None
+
+    response = Response(session.sid)
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+
+    return response
 
 @flask_app.route('/diag')
 # @login_required
