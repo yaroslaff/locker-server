@@ -235,7 +235,7 @@ def authenticated():
         try:
             app = App(request.host)
             log.debug(f"APP: {app}")
-            app.log(f"Authenticated called sid: {session.sid}")
+            app.log(f"Authenticated host: {request.host} sid: {session.sid}")
 
         except AppNotFound:            
             reply['messages'].append(f'Not found app {request.host}')
