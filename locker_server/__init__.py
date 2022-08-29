@@ -131,6 +131,7 @@ def diag():
     }
 
     counter = int(request.cookies.get('counter','0'))
+    app.log(f"counter: {counter}")
     results['info']['counter'] = counter
 
     results['info']['pwd'] = os.getcwd()
@@ -198,7 +199,7 @@ def diag():
     resp = make_response(json.dumps(results, indent=4))
     resp.set_cookie('counter', str(counter+1))
 
-    return jsonify(results)
+    return resp
 
 
 @flask_app.route("/")
