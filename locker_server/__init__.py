@@ -268,7 +268,7 @@ def authenticated():
                 app.log(msg)
 
             if m.group('scheme')=='http':
-                msg = f'WARNING! scheme is {m.group("scheme")}'
+                msg = f'WARNING! origin scheme is {m.group("scheme")}'
                 reply['messages'].append(msg)
                 app.log(msg)
 
