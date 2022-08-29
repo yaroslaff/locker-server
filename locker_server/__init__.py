@@ -196,7 +196,7 @@ def diag():
         results['errors'].append(str(e))
 
     resp = make_response(json.dumps(results, indent=4))
-    resp.set_cookie('counter', counter+1)
+    resp.set_cookie('counter', str(counter+1))
 
     return jsonify(results)
 
