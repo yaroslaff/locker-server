@@ -132,6 +132,8 @@ def diag():
 
     results['info']['pwd'] = os.getcwd()
 
+    log.debug("DIAG....")
+
     try:
 
         try:
