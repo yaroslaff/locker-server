@@ -164,10 +164,10 @@ def callback():
     # The user authenticated with Google, authorized your
     # app, and now you've verified their email through Google!
 
-    userinfo = userinfo_response.json`()
-    sub = userinfo['sub`'`]
+    userinfo = userinfo_response.json()
+    sub = userinfo['sub']
 
-    if not userinfo["email_verified"`]:
+    if not userinfo["email_verified"]:
         msg = f"User email not available or not verified by {provider}."
         app.log(msg)
         return msg, 400
