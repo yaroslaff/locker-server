@@ -278,8 +278,9 @@ def authenticated():
 
         # app.check_origin()
         if not app.allowed_origin(origin):
-            app.log(f'Origin {origin} is incorrect')
-            reply['messages'].append(f'Origin {origin} is incorrect')
+            msg = f'WARNING! Origin {origin} is not allowed'
+            app.log(msg)
+            reply['messages'].append(msg)
             raise Exception
 
         app.log(f"Status: {current_user.is_authenticated}")
