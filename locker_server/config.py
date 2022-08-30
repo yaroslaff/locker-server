@@ -98,6 +98,8 @@ if not config['NGINX_VHOST_TPL_PATH']:
 pubconf = config['PUBCONF']
 if not pubconf.get('hostname'):
     pubconf['hostname'] = socket.gethostname()
+if not pubconf.get('topdomain'):
+    pubconf['topdomain'] = config['TOPDOMAIN']
 
 if not config['MYIPS']:
     config['MYIPS'] = [ myip() ]
